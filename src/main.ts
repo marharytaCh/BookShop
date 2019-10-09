@@ -1,12 +1,23 @@
+//Nest
 import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter } from '@nestjs/platform-express'
+import { ExpressAdapter } from '@nestjs/platform-express';
+
+//Modules
 import { AppModule } from './app.module';
 
+//Services
+
 async function bootstrap() {
+   
+  //requires
+  
+  const mode = require('./environment/environment');
   const http = require("http");
   const https = require("https");
   const fs = require("fs");
   const express = require("express");
+
+
 const httpsOptions = {
   key: fs.readFileSync('src/secrets/private.key'),
   cert: fs.readFileSync('src/secrets/certificate.crt'),
@@ -18,6 +29,7 @@ const app = await NestFactory.create(
   new ExpressAdapter(server),
 );
 await app.init();
+
 const httpsServer = https.createServer(httpsOptions, server).listen(443);
 
 const httpServer = http.createServer(function (req, res) {
@@ -25,6 +37,6 @@ const httpServer = http.createServer(function (req, res) {
   res.end();
 }).listen(80);
 
-
+mode(); //function wich check dev or prod mode
 }
 bootstrap();
