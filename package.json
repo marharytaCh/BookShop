@@ -23,6 +23,10 @@
     "@nestjs/common": "^6.7.2",
     "@nestjs/core": "^6.7.2",
     "@nestjs/platform-express": "^6.7.2",
+    "@nestjsx/crud": "^4.2.0",
+    "crud": "0.0.28",
+    "dotenv": "^8.1.0",
+    "fs-extra": "^8.1.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3"
