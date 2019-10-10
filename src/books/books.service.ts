@@ -3,29 +3,27 @@ import { BOOKS } from '../mocks/books.mocks';
 
 @Injectable()
 export class BooksService {
-  books = BOOKS;
+  printingEditions = BOOKS;
 
   getBooks() {
-    return this.books;
+    return this.printingEditions;
   }
 
   getBookById(bookId) {
-    let id = Number(bookId);
-    const book = this.books.find(
-       (book) => book.id === id
-       );
+    const id = Number(bookId);
+    const book = this.printingEditions.find(
+       (book) => book.id === id);
     return book;
   }
 
   getBookByName(bookName) {
-    let name = String(bookName);
-    const book = this.books.find(
-      (book) => book.title === name
-      );
-      return book;
+    const name = String(bookName);
+    const book = this.printingEditions.find(
+      (book) => book.title === name);
+    return book;
   }
 
   addBook(book) {
-    return this.books.push(book);
+    return this.printingEditions.push(book);
   }
 }

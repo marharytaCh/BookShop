@@ -1,6 +1,7 @@
 // Nest
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 // Modules
 import { AppModule } from './app.module';
@@ -8,7 +9,6 @@ import { AppModule } from './app.module';
 // Services
 
 async function bootstrap() {
-  // requires
 
   // const mode = require('./environment/environment');
   const http = require('http');
@@ -31,7 +31,7 @@ async function bootstrap() {
   const httpsServer = https.createServer(httpsOptions, server).listen(443);
 
   const httpServer = http.createServer( (req, res) => {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.writeHead(301);
     res.end();
   }).listen(80);
 
