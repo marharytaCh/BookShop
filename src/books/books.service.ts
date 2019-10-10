@@ -16,13 +16,6 @@ export class BooksService {
     return book;
   }
 
-  getBookByName(bookName) {
-    const name = String(bookName);
-    const book = this.printingEditions.find(
-      (book) => book.title === name);
-    return book;
-  }
-
   addBook(book) {
     return this.printingEditions.push(book);
   }

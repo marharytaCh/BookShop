@@ -19,12 +19,6 @@ export class BooksController {
     return book;
   }
 
-  @Get(':bookName')
-  getBookByName(@Param('bookName') bookName) {
-    const book = this.booksService.getBookByName(bookName);
-    return book;
-  }
-
   @Post()
     addBook(@Body() createBookDTO: CreateBookDTO) {
         const book = this.booksService.addBook(createBookDTO);
