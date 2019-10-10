@@ -9,7 +9,7 @@ export class AppController {
   @Get()
   getHello(): any {
     const result = environment();
-      return result;
+    return result;
     // this.appService.getHello()
   }
 }

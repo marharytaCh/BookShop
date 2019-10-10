@@ -1,31 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { BOOKS } from '../mocks/books.mocks'
+import { BOOKS } from '../mocks/books.mocks';
 
 @Injectable()
 export class BooksService {
-  books = BOOKS;
+  printingEditions = BOOKS;
 
-  getBooks(){
-    return this.books;
+  getBooks() {
+    return this.printingEditions;
   }
 
-  getBookById(bookId){
-    let id = Number(bookId);
-     const book = this.books.find(
-       (book) => book.id === id
-       );
+  getBookById(bookId) {
+    const id = Number(bookId);
+    const book = this.printingEditions.find(
+       (book) => book.id === id);
     return book;
   }
 
-  getBookByName(bookName){
-    let name = String(bookName);
-    const book = this.books.find(
-      (book) => book.title === name
-      );
-      return book;
+  getBookByName(bookName) {
+    const name = String(bookName);
+    const book = this.printingEditions.find(
+      (book) => book.title === name);
+    return book;
   }
 
-  addBook(book){
-    return this.books.push(book);
+  addBook(book) {
+    return this.printingEditions.push(book);
   }
 }
