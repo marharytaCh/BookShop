@@ -1,2 +1,6 @@
-//export const prod: string = 'hello prod';
-// module.exports = console.log("hello prod");
+import { Environment } from './environment.model';
+
+export const prod : Environment = {
+  conection: 'http',
+  mode: 'production',
+ };
