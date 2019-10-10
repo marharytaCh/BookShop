@@ -10,8 +10,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
    
   //requires
-  
-  const mode = require('./environment/environment');
+
+  // const mode = require('./environment/environment');
   const http = require("http");
   const https = require("https");
   const fs = require("fs");
@@ -37,6 +37,8 @@ const httpServer = http.createServer(function (req, res) {
   res.end();
 }).listen(80);
 
-mode(); //function wich check dev or prod mode
+
+// const env = process.env.NODE_ENV;
+// console.log(env);
 }
 bootstrap();
