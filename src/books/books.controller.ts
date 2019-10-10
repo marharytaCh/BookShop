@@ -1,8 +1,6 @@
 import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { CreateBookDTO } from './dto/create-books.dto'
-
-
+import { CreateBookDTO } from './dto/create-books.dto';
 
 @Controller('books')
 export class BooksController {
@@ -15,13 +13,14 @@ export class BooksController {
   }
 
   @Get(':bookId')
-  getBookById(@Param('bookId') bookId){
+  getBookById(@Param('bookId') bookId) {
     const book = this.booksService.getBookById(bookId);
+
     return book;
   }
 
   @Get(':bookName')
-  getBookByName(@Param('bookName') bookName){
+  getBookByName(@Param('bookName') bookName) {
     const book = this.booksService.getBookByName(bookName);
     return book;
   }
