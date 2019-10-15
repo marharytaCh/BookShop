@@ -5,10 +5,16 @@ import { prod } from './environment.prod';
 
 const env = process.env.NODE_ENV;
 export const environment = (): Environment => {
-   switch (env) {
-    case 'development':
-        return dev ;
-    case 'production':
-        return prod;
-      }
+    switch (env) {
+        case 'production':
+            return prod;
+        default:
+         return dev ;
+       }
+    // if (env === 'production') {
+    //     return prod;
+    // }
+    // if (env !== 'production') {
+    //     return dev;
+    // }
   };

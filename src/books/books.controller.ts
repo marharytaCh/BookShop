@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDTO } from './dto/create-books.dto';
+import { ApiUseTags, ApiResponse } from '@nestjs/swagger';
 
+@ApiUseTags('books')
 @Controller('books')
 export class BooksController {
   constructor(private booksService: BooksService) {}
