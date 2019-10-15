@@ -17,7 +17,6 @@ export class BooksController {
   @Get(':bookId')
   getBookById(@Param('bookId') bookId) {
     const book = this.booksService.getBookById(bookId);
-
     return book;
   }
 
