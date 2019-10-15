@@ -11,10 +11,4 @@ export const environment = (): Environment => {
         default:
          return dev ;
        }
-    // if (env === 'production') {
-    //     return prod;
-    // }
-    // if (env !== 'production') {
-    //     return dev;
-    // }
   };

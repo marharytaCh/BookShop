@@ -1,16 +1,10 @@
-// Nest
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
-// Modules
 import { AppModule } from './app.module';
-
-// Services
 
 async function bootstrap() {
 
-  // const mode = require('./environment/environment');
   const http = require('http');
   const https = require('https');
   const fs = require('fs');

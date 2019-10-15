@@ -4,20 +4,20 @@ import { BOOKS } from '../mocks/books.mocks';
 
 @Injectable()
 export class BooksService {
-  printingEditions = BOOKS;
+  books = BOOKS;
 
   getBooks() {
-    return this.printingEditions;
+    return this.books;
   }
 
   getBookById(bookId) {
     const id = Number(bookId);
-    const book = this.printingEditions.find(
+    const book = this.books.find(
        (book) => book.id === id);
     return book;
   }
 
   addBook(book) {
-    return this.printingEditions.push(book);
+    return this.books.push(book);
   }
 }

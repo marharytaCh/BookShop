@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { CreateBookDTO } from './dto/create-books.dto';
+import { CreateBook } from './book.model';
 import { ApiUseTags, ApiResponse } from '@nestjs/swagger';
 
 @ApiUseTags('books')
@@ -22,8 +22,8 @@ export class BooksController {
   }
 
   @Post()
-    addBook(@Body() createBookDTO: CreateBookDTO) {
-        const book = this.booksService.addBook(createBookDTO);
+    addBook(@Body() createBook: CreateBook) {
+        const book = this.booksService.addBook(createBook);
         return book;
     }
 }
