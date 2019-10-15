@@ -5,7 +5,7 @@ import { BooksController } from 'src/books/books.controller';
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: Function) {
-        console.log (req);
+        console.log (req.headers);
         next();
       }
 }

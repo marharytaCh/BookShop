@@ -1,7 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+// import { AnyExceptionFilter } from './common/exception.filter';
 async function bootstrap() {
 
   const http = require('http');
@@ -31,6 +32,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.init();
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
 
   const httpsServer = https.createServer(httpsOptions, server).listen(443);
 
