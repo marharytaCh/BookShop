@@ -2,7 +2,8 @@ import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-// import { AnyExceptionFilter } from './common/exception.filter';
+import { AllExceptionFilter } from './common/exception.filter';
+
 async function bootstrap() {
 
   const http = require('http');
@@ -33,10 +34,9 @@ async function bootstrap() {
 
   await app.init();
 
-  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionFilter());
 
   const httpsServer = https.createServer(httpsOptions, server).listen(443);
-
   const httpServer = http.createServer( (req, res) => {
     res.writeHead(301);
     res.end();

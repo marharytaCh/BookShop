@@ -1,27 +1,23 @@
 import { Catch, ArgumentsHost, HttpException, ExceptionFilter, HttpStatus, Logger } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
 
 @Catch()
-export class HttpErrorFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
-    const request = host.switchToHttp().getRequest();
-    const response = host.switchToHttp().getResponse();
-    const status = exception.getStatus() ;
-    const errorResponse = {
-      code: status,
-      timestamp: new Date().toLocaleDateString(),
+export class AllExceptionFilter implements ExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse();
+    const request = ctx.getRequest();
+
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    response.status(status).json({
+      statusCode: status,
+      timestamp: new Date().toISOString(),
       path: request.url,
       method: request.method,
-      message: exception.message.error || exception.message || null,
-    };
-    Logger.error(
-      `${request.method} ${request.url}`,
-      JSON.stringify(errorResponse),
-      'ExceptionFilter',
-    );
-
-    response
-      .status(status)
-      .json(errorResponse);
+    });
+    console.log(response.statusCode);
   }
 }

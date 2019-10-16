@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Param, Body, UseFilters, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, UseFilters, ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBook } from './book.model';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-// import { AnyExceptionFilter } from 'src/common/exception.filter';
+// import { AllExceptionFilter } from 'src/common/exception.filter';
 
 @ApiUseTags('books')
+// @UseFilters(new AllExceptionFilter())
 @Controller('books')
 export class BooksController {
   constructor(private booksService: BooksService) {}
@@ -12,6 +13,10 @@ export class BooksController {
   @ApiResponse({ status: 200, description: 'Return all books.'})
   @Get()
   getBooks() {
+    // throw new HttpException({
+    //   status: HttpStatus.FORBIDDEN,
+    //   error: 'This is a custom message',
+    // }, 403);
     const books = this.booksService.getBooks();
     return books;
   }
