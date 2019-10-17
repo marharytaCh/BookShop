@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { BOOKS } from '../mocks/books.mocks';
-// import { Book } from './book.model'
 
 @Injectable()
 export class BooksService {
@@ -13,6 +12,7 @@ export class BooksService {
   getBookById(bookId) {
     const id = Number(bookId);
     const book = this.books.find(
+       // tslint:disable-next-line: no-shadowed-variable
        (book) => book.id === id);
     return book;
   }

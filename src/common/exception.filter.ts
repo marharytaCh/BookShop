@@ -1,4 +1,4 @@
-import { Catch, ArgumentsHost, HttpException, ExceptionFilter, HttpStatus, Logger } from '@nestjs/common';
+import { Catch, ArgumentsHost, HttpException, ExceptionFilter, HttpStatus } from '@nestjs/common';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
@@ -18,6 +18,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       path: request.url,
       method: request.method,
     });
+    // tslint:disable-next-line: no-console
     console.log(response.statusCode);
   }
 }

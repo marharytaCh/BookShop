@@ -28,7 +28,6 @@
     "@nestjs/swagger": "^3.1.0",
     "@nestjsx/crud": "^4.2.0",
     "@types/joi": "^14.3.3",
-    "@types/passport-local-mongoose": "^4.0.13",
     "crud": "0.0.28",
     "dotenv": "^8.1.0",
     "fs-extra": "^8.1.0",

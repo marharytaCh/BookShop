@@ -2,6 +2,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 export class CreateUser {
   @ApiModelProperty()
+  // tslint:disable-next-line: variable-name
   readonly _id: number;
 
   @ApiModelProperty()
