@@ -6,10 +6,13 @@ import { BooksController } from './books/books.controller';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionFilter } from './common/exception.filter';
 import { BooksService } from './books/books.service';
+import { UserModule } from './user/user.module';
+import { UsersController } from './users/users.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [BooksModule],
-  controllers: [AppController, BooksController],
+  imports: [BooksModule, UserModule, AuthModule],
+  controllers: [AppController, BooksController, UsersController],
   providers: [BooksService,
     {
       provide: APP_FILTER,
