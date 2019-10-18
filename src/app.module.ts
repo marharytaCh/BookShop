@@ -2,17 +2,19 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { LoggerMiddleware, AllExceptionFilter } from 'src/common/index';
+import { LoggerMiddleware, AllExceptionFilter, LocalStrategy } from 'src/common/index';
 
 import { UserController, BooksController, AuthController } from 'src/controllers/index';
 import { AppController } from 'src/app.controller';
 
 import { BooksService, UserService, AuthService } from 'src/services/index';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://localhost/nest')],
+  imports: [MongooseModule.forRoot('mongodb://localhost/nest'),
+            PassportModule],
   controllers: [AppController, BooksController, UserController],
-  providers: [BooksService,
+  providers: [BooksService, UserService, AuthService, LocalStrategy,
     {
       provide: APP_FILTER,
       useClass: AllExceptionFilter,
