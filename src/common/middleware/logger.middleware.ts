@@ -1,10 +1,11 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { BooksController } from 'src/books/books.controller';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
+  // tslint:disable-next-line: ban-types
   use(req: Request, res: Response, next: Function) {
+        // tslint:disable-next-line: no-console
         console.log (req.headers);
         next();
       }

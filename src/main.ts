@@ -1,8 +1,10 @@
-import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+import { NestFactory} from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { AllExceptionFilter } from './common/exception.filter';
+
+import { AllExceptionFilter } from 'src/common/index';
+
+import { AppModule } from 'src/app.module';
 
 async function bootstrap() {
 
