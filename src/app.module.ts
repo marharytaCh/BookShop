@@ -4,10 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { LoggerMiddleware, AllExceptionFilter } from 'src/common/index';
 
-import { UserController, BooksController } from 'src/controllers/index';
+import { UserController, BooksController, AuthController } from 'src/controllers/index';
 import { AppController } from 'src/app.controller';
 
-import { BooksService } from 'src/services/index';
+import { BooksService, UserService, AuthService } from 'src/services/index';
 
 @Module({
   imports: [MongooseModule.forRoot('mongodb://localhost/nest')],
