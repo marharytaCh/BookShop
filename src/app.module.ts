@@ -19,7 +19,7 @@ import { jwtConstants } from 'src/common/constants';
             secret: jwtConstants.secret,
             signOptions: { expiresIn: '60s' },
           })],
-  controllers: [AppController, BooksController, UserController],
+  controllers: [AppController, BooksController, UserController, AuthController],
   providers: [BooksService, UserService, AuthService, LocalStrategy,
     {
       provide: APP_FILTER,
