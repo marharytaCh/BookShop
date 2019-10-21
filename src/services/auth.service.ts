@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService, User } from 'src/services/index';
 import { environment } from 'src/environment';
 
+// tslint:disable-next-line: no-var-requires
 const jwt = require ('jsonwebtoken');
 const env = environment();
 

@@ -1,5 +1,6 @@
 import { Environment } from './environment.model';
 
+// tslint:disable-next-line: no-var-requires
 const fs = require('fs');
 
 export const dev: Environment = {
