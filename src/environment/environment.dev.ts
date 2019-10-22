@@ -6,7 +6,7 @@ const fs = require('fs');
 export const dev: Environment = {
   conection: 'http',
   mode: 'dev',
-  tokenSecret: fs.readFileSync('src/secrets/jwt.key'),
+  tokenSecret: fs.readFileSync('src/secrets/jwtKey.key'),
   tokenLife: 6400,
   refreshTokenLife: 36000,
  };
