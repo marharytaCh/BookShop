@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService, User } from 'src/services/index';
+import { UserService } from 'src/services/index';
+import { User } from 'src/models';
 import { environment } from 'src/environment';
 
 // tslint:disable-next-line: no-var-requires
@@ -9,7 +10,9 @@ const env = environment();
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UserService) {}
+  constructor(
+    @Inject(forwardRef(() => UserService))
+    private readonly usersService: UserService) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findOne(username);
@@ -34,10 +37,5 @@ export class AuthService {
 
     return refreshToken;
   }
-  // async login(user: any) {
-  //   const payload = { username: user.username, sub: user.userId};
-  //   return {
-  //     access_token: this.jwtService.sign(payload),
-  //   };
-  // }
+
 }

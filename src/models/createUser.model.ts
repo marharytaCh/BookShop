@@ -1,19 +1,22 @@
 import { ApiModelProperty } from '@nestjs/swagger';
+import * as mongoose from 'mongoose';
+import { MongooseModule } from '@nestjs/mongoose';
 
-export class CreateUser {
-  @ApiModelProperty()
-  // tslint:disable-next-line: variable-name
-  readonly _id: number;
+export const CreateUserSchema = new mongoose.Schema({
+  firstName: String,
+  lastName: String,
+  email: {type: String,
+          unique: true,
+          required: true},
+  password: {
+            type: String,
+            required: true},
+});
 
-  @ApiModelProperty()
-  readonly firstName: string;
-
-  @ApiModelProperty()
-  readonly lastName: string;
-
-  @ApiModelProperty()
-  readonly email: string;
-
-  @ApiModelProperty()
-  readonly password; string;
+export interface CreateUser extends mongoose.Document {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?; string;
 }

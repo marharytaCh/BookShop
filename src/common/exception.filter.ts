@@ -19,6 +19,6 @@ export class AllExceptionFilter implements ExceptionFilter {
       method: request.method,
     });
     // tslint:disable-next-line: no-console
-    console.log(response.statusCode);
+    console.log(response.statusMessage);
   }
 }

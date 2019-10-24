@@ -10,12 +10,15 @@ import { UserController, BooksController, AuthController } from 'src/controllers
 import { AppController } from 'src/app.controller';
 
 import { BooksService, UserService, AuthService } from 'src/services/index';
+
 import { Environment, environment } from 'src/environment/index';
-import { AuthModule } from 'src/auth.module';
+
+import { BookSchema } from 'src/documents';
 
 const env: Environment = environment();
 @Module({
-  imports: [ // MongooseModule.forRoot('mongodb://localhost/nest'),
+  imports: [ MongooseModule.forRoot('mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority'),
+  MongooseModule.forFeature([{ name: 'Book', schema: BookSchema }]),
           // AuthModule,
             PassportModule.register({defaultStrategy: 'jwt'}),
           JwtModule.register({

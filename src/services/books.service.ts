@@ -1,23 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { BOOKS } from '../mocks/books.mocks';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Book } from 'src/documents/books.schema';
+import { CreateBook } from 'src/models';
 
 @Injectable()
 export class BooksService {
-  books = BOOKS;
+  constructor(
+    @InjectModel('Book') private readonly bookModel: Model<Book>) {}
 
-  getBooks() {
-    return this.books;
+  async getBooks(): Promise<Book[]> {
+    const books = await this.bookModel.find().exec();
+    return books;
   }
 
-  getBookById(bookId) {
-    const id = Number(bookId);
-    const book = this.books.find(
-       // tslint:disable-next-line: no-shadowed-variable
-       (book) => book.id === id);
+  async getBookById(bookId): Promise<Book[]> {
+    const book = await this.bookModel.findById(bookId).exec();
     return book;
   }
 
-  addBook(book) {
-    return this.books.push(book);
+  async addBook(createBook: CreateBook): Promise<Book[]> {
+    const newBook = await this.bookModel(createBook);
+    return newBook.save();
+  }
+
+  async editBook(bookId, createBook: CreateBook): Promise<Book[]> {
+    const editedBook = await this.bookModel.findByIdAndUpdate(bookId, createBook, {new: true});
+    return editedBook;
+  }
+
+  async deleteBook(bookId): Promise<Book[]> {
+    const deletedBook = await this.bookModel.findByIdAndRemove(bookId);
+    return deletedBook;
   }
 }

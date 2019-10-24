@@ -1,8 +1,12 @@
-import { PassportLocalDocument } from 'mongoose';
+import { ApiModelProperty} from '@nestjs/swagger';
 
-export interface UserInterface extends PassportLocalDocument {
-    readonly firstName: string;
-    readonly lastName: string;
-    readonly email: string;
-    readonly password: string;
-}
+export class User {
+    @ApiModelProperty()
+    userId: number;
+    @ApiModelProperty()
+    username: string;
+    @ApiModelProperty()
+    password: string;
+    @ApiModelProperty()
+    role: string;
+  }

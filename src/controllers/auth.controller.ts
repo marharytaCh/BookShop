@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Post, Body, UseFilters } from '@nestjs/common';
+import { Controller, Get, UseGuards, Post, Body, UseFilters, Request } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthService } from 'src/services/index';
@@ -13,7 +13,7 @@ export interface Token {
 
 @ApiBearerAuth()
 @ApiUseTags('Authentification')
-@Controller('api')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
@@ -31,10 +31,11 @@ export class AuthController {
     return  myToken;
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('person')
-  @Roles('user')
-  getProfile(@Body() req) {
-    return req.user;
+  // @Roles('user')
+  getProfile(@Request() req) {
+    console.log(req);
+    return req.body;
   }
 }
