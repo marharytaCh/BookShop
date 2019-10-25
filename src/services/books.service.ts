@@ -1,37 +1,92 @@
 import { Injectable } from '@nestjs/common';
-import { BOOKS } from '../mocks/books.mocks';
-import { InjectModel } from '@nestjs/mongoose';
+import { EditBookModel } from 'src/models'
 import { Model } from 'mongoose';
-import { Book } from 'src/documents/books.schema';
+import { Book, BookSchema, Author } from 'src/documents';
 import { CreateBook } from 'src/models';
+import { BookRepo } from 'src/repositories/book.repository';
 
 @Injectable()
 export class BooksService {
   constructor(
-    @InjectModel('Book') private readonly bookModel: Model<Book>) {}
+    public readonly bookRepo: BookRepo,
+    ) {}
 
-  async getBooks(): Promise<Book[]> {
-    const books = await this.bookModel.find().exec();
-    return books;
+  public async getBooks(): Promise<Book[]> {
+    const books = await this.bookRepo.getBook();
+    return books.map(book => ({
+      id: book.id,
+      name: book.name,
+      description: book.description,
+      price: book.price,
+      status: book.status,
+      currency: book.currency,
+      type: book.type,
+      author: book.author,
+    }));
+
   }
 
-  async getBookById(bookId): Promise<Book[]> {
-    const book = await this.bookModel.findById(bookId).exec();
-    return book;
+  async getBookById(bookId: string): Promise<any> {
+    const book: Book = await this.getBookById(bookId);
+    const authorId = book.author;
+    const author: Book = await this.getAuthorById(authorId);
+    const completed = {
+      book,
+      author,
+    };
+    return completed;
   }
 
-  async addBook(createBook: CreateBook): Promise<Book[]> {
-    const newBook = await this.bookModel(createBook);
-    return newBook.save();
+  public async addBook(createBook: CreateBook): Promise<Book> {
+    const newBook: Book = {} as Book;
+    newBook.name = createBook.name;
+    newBook.description = createBook.description;
+    newBook.price = createBook.price;
+    newBook.status = createBook.status;
+    newBook.currency = createBook.currency;
+    newBook.type = createBook.type;
+    newBook.author = createBook.author;
+
+    const author: Book = await this.getAuthorById(createBook.author);
+
+    if (!author) {
+      createBook.author = null;
+    }
+
+    const newCreatedBook: Book = await this.bookRepo.addBook(createBook);
+    return newCreatedBook;
   }
 
-  async editBook(bookId, createBook: CreateBook): Promise<Book[]> {
-    const editedBook = await this.bookModel.findByIdAndUpdate(bookId, createBook, {new: true});
-    return editedBook;
+  public async editBook(book: EditBookModel): Promise<Book> {
+    const editeBook: Book = {} as Book;
+    editeBook.id = book.id;
+    editeBook.name = book.name;
+    editeBook.description = book.description;
+    editeBook.price = book.price;
+    editeBook.status = book.status;
+    editeBook.currency = book.currency;
+    editeBook.type = book.type;
+    editeBook.author = book.author;
+    const author: Author = await this.getAuthorById(editeBook.author);
+    const editedBook: Book = await this.getBookById(editeBook.id);
+    const newBook: Book = await this.bookRepo.editBook(editedBook)
+    return newBook;
   }
 
   async deleteBook(bookId): Promise<Book[]> {
     const deletedBook = await this.bookModel.findByIdAndRemove(bookId);
     return deletedBook;
   }
+
+  private async getAuthor(id: string): Promise<Book> {
+    const foundAuthor: Book = await this.bookRepo.getAuthor(id);
+
+    return foundAuthor;
+  }
+
+  public async getAuthorById(authorId: string): Promise<Book> {
+    const authorById: Book = await this.getAuthor(authorId);
+
+    return authorById;
+}
 }

@@ -14,5 +14,5 @@ export class CreateBook {
   @ApiModelProperty()
   readonly type: string;
   @ApiModelProperty()
-  readonly author: string;
+  author: string;
 }

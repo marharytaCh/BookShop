@@ -9,4 +9,5 @@ export const dev: Environment = {
   tokenSecret: fs.readFileSync('src/secrets/jwtKey.key'),
   tokenLife: 6400,
   refreshTokenLife: 36000,
+  connectionWithMongo: 'mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority',
  };

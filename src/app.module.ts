@@ -6,18 +6,22 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { LoggerMiddleware, AllExceptionFilter, LocalStrategy, JwtStrategy, RolesGuard } from 'src/common/index';
 
-import { UserController, BooksController, AuthController } from 'src/controllers/index';
+import { UserController, BooksController, AuthController, AuthorController } from 'src/controllers/index';
 import { AppController } from 'src/app.controller';
 
-import { BooksService, UserService, AuthService } from 'src/services/index';
+import { BooksService, UserService, AuthService, AuthorService } from 'src/services/index';
 
 import { Environment, environment } from 'src/environment/index';
 
 import { BookSchema } from 'src/documents';
+import { BookRepo } from './repositories/book.repository';
+import { AuthorRepo } from './repositories';
 
 const env: Environment = environment();
 @Module({
-  imports: [ MongooseModule.forRoot('mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority'),
+  imports: [ MongooseModule.forRoot(env.connectionWithMongo,
+  { useNewUrlParser: true,
+    useUnifiedTopology: true}),
   MongooseModule.forFeature([{ name: 'Book', schema: BookSchema }]),
           // AuthModule,
             PassportModule.register({defaultStrategy: 'jwt'}),
@@ -27,8 +31,8 @@ const env: Environment = environment();
           },
         ),
       ],
-  controllers: [AppController, BooksController, UserController, AuthController],
-  providers: [BooksService, AuthService, UserService, LocalStrategy, JwtStrategy,
+  controllers: [AppController, BooksController, UserController, AuthController, AuthorController],
+  providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy, BookRepo, AuthorRepo,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
