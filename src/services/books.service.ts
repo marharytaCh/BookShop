@@ -73,9 +73,11 @@ export class BooksService {
     return newBook;
   }
 
-  async deleteBook(bookId): Promise<Book[]> {
-    const deletedBook = await this.bookModel.findByIdAndRemove(bookId);
-    return deletedBook;
+  async deleteBook(bookId: string): Promise<any> {
+    const deletBook: Book = {} as Book;
+    deletBook.id = bookId;
+    const completed = await this.bookRepo.deleteBook(deletBook);
+    return completed;
   }
 
   private async getAuthor(id: string): Promise<Book> {
