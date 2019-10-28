@@ -14,12 +14,12 @@ import { BooksService, UserService, AuthService, AuthorService } from 'src/servi
 import { Environment, environment } from 'src/environment/index';
 
 import { BookSchema } from 'src/documents';
-import { BookRepo } from './repositories/book.repository';
-import { AuthorRepo } from './repositories';
+
+import { AuthorRepo, BookRepo } from 'src/repositories';
 
 const env: Environment = environment();
 @Module({
-  imports: [ MongooseModule.forRoot(env.connectionWithMongo,
+  imports: [ MongooseModule.forRoot('mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true}),
   MongooseModule.forFeature([{ name: 'Book', schema: BookSchema }]),

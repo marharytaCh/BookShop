@@ -12,24 +12,26 @@ export class BooksController {
   @ApiOperation({ title: 'Get all books' })
   @ApiResponse({ status: 200, description: 'Return all books.'})
   @Get()
-  async getBooks() {
-    const books = await this.booksService.getBooks();
-    return books;
+  public async getBooks() {
+    console.log('hello1');
+    const booksArr = await this.booksService.getBooks();
+   
+    return booksArr;
   }
 
-  @Get(':bookId')
-  async getBookById(@Res() res, @Param('bookId') bookId: string,
-    ) {
-    const book = await this.booksService.getBookById(bookId);
-    if (!book) {
-      throw new NotFoundException('Book does not exist');
-    }
-    return book;
-  }
+  // @Get(':bookId')
+  // async getBookById(@Res() res, @Param('bookId') bookId: string,
+  //   ) {
+  //   const book = await this.booksService.getBookById(bookId);
+  //   if (!book) {
+  //     throw new NotFoundException('Book does not exist');
+  //   }
+  //   return book;
+  // }
 
-  @ApiOperation({ title: 'Create book' })
-  @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  // @ApiOperation({ title: 'Create book' })
+  // @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
+  // @ApiResponse({ status: 403, description: 'Forbidden.' })
 
   @Post()
   async addBook(@Body() createBook: CreateBook) {
@@ -37,24 +39,24 @@ export class BooksController {
       return newBook;
     }
 
-  // @Put()
-  //   async editBook(
-  //     @Query('bookId', new ValidateObjectId()) bookId,
-  //     @Body() createBook: CreateBook,
-  //     ) {
-  //       const editedBook = await this.booksService.editBook(bookId, createBook);
-  //       if (!editedBook) {
-  //       throw new NotFoundException('Book does not exist');
-  //       }
-  //       return editedBook;
-  //   }
-    // @Delete('')
-    //   async deleteBook(@Param('id') bookId: string,
-    //   ) {
-    //     const deletedBook = await this.booksService.deleteBook(bookId);
-    //     if (!deletedBook) {
-    //       throw new NotFoundException('Book does not exist');
-    //     }
-    //     return deletedBook;
-    //   }
+  // // @Put()
+  // //   async editBook(
+  // //     @Query('bookId', new ValidateObjectId()) bookId,
+  // //     @Body() createBook: CreateBook,
+  // //     ) {
+  // //       const editedBook = await this.booksService.editBook(bookId, createBook);
+  // //       if (!editedBook) {
+  // //       throw new NotFoundException('Book does not exist');
+  // //       }
+  // //       return editedBook;
+  // //   }
+  //   // @Delete('')
+  //   //   async deleteBook(@Param('id') bookId: string,
+  //   //   ) {
+  //   //     const deletedBook = await this.booksService.deleteBook(bookId);
+  //   //     if (!deletedBook) {
+  //   //       throw new NotFoundException('Book does not exist');
+  //   //     }
+  //   //     return deletedBook;
+  //   //   }
 }

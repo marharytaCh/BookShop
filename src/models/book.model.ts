@@ -2,17 +2,17 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 export class CreateBook {
   @ApiModelProperty()
-  readonly name: string;
+  name: string;
   @ApiModelProperty()
-  readonly description: string;
+  description: string;
   @ApiModelProperty()
-  readonly price: number;
+  price: number;
   @ApiModelProperty()
-  readonly status: string;
+  status: string;
   @ApiModelProperty()
-  readonly currency: string;
+  currency: string;
   @ApiModelProperty()
-  readonly type: string;
+  type: string;
   @ApiModelProperty()
   author: string;
 }
