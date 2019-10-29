@@ -30,7 +30,7 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Eveloped by
+## Developed by
 
 - Margarita Chernysh
 
