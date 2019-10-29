@@ -1,4 +1,5 @@
-#Internship project
+# Internship project
+
 ### Project description
 
 Online store of a printing edition (books, magazines, newspapers), with a personal account for users and the administrator.
