@@ -1,9 +1,14 @@
-**Internship project**
-## Description
+#Internship project
+### Project description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Online store of a printing edition (books, magazines, newspapers), with a personal account for users and the administrator.
 
-## Installation
+## The project used
+
+*Nest.js
+*Mongo.BD
+*npm
+
 
 ```bash
 $ npm install
