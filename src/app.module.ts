@@ -19,11 +19,7 @@ import { AuthorRepo, BookRepo } from 'src/repositories';
 
 const env: Environment = environment();
 @Module({
-  imports: [ MongooseModule.forRoot('mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority',
-  { useNewUrlParser: true,
-    useUnifiedTopology: true}),
-  MongooseModule.forFeature([{ name: 'Book', schema: BookSchema }]),
-          // AuthModule,
+  imports:[// AuthModule,
             PassportModule.register({defaultStrategy: 'jwt'}),
           JwtModule.register({
             secret: env.tokenSecret,

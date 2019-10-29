@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Book, BookSchema, Author } from 'src/documents';
 import { CreateBook } from 'src/models';
 import { BookRepo } from 'src/repositories/book.repository';
+import { BookModel } from 'src/models/book.model';
 
 @Injectable()
 export class BooksService {
@@ -12,25 +13,24 @@ export class BooksService {
     ) {}
 
   public async getBooks(): Promise<Book[]> {
-    console.log('hello2');
+    const booksModel: BookModel[] = new Array<BookModel>();
     const books = await this.bookRepo.getBook();
-    console.log('hello3');
-    console.log(books);
-    for (let i = 0; i < books.length; i++) {
-      const booksObj: Book = {} as Book;
-      booksObj.id = books[i].id;
-      booksObj.name = books[i].name;
-      booksObj.description = books[i].description;
-      booksObj.price = books[i].price;
-      booksObj.status = books[i].status;
-      booksObj.currency = books[i].currency;
-      booksObj.type = books[i].type;
-      booksObj.author = books[i].author;
-      
-      books.push(booksObj);
+
+    for (const book of books) {
+      const bookModel: BookModel = {} as BookModel;
+      bookModel.id = book.id;
+      bookModel.id = book.id;
+      bookModel.name = book.name;
+      bookModel.description = book.description;
+      bookModel.price = book.price;
+      bookModel.status = book.status;
+      bookModel.currency = book.currency;
+      bookModel.type = book.type;
+      bookModel.author = book.author;
+      booksModel.push(bookModel);
     }
-    console.log('hello5');
-    return books;
+
+    return booksModel;
   }
 
 //   async getBookById(bookId: string): Promise<any> {
@@ -44,18 +44,26 @@ export class BooksService {
 //     return completed;
 //   }
 
-  public async addBook(createBook: CreateBook): Promise<Book> {
-    const newBook: Book = {} as Book;
-    newBook.name = createBook.name;
-    newBook.description = createBook.description;
-    newBook.price = createBook.price;
-    newBook.status = createBook.status;
-    newBook.currency = createBook.currency;
-    newBook.type = createBook.type;
-    newBook.author = createBook.author;
+  public async addBook(createBookModel: CreateBook): Promise<Book> {
+    const newBook: BookModel = {} as BookModel;
+    const createdBook: Book = {} as Book;
+    console.log('in book service');
+    console.log(createdBook);
 
-    const newCreatedBook: Book = await this.bookRepo.addBook(createBook);
-    return newCreatedBook;
+    const newCreatedBook: Book = await this.bookRepo.addBook(createdBook);
+
+    console.log(newCreatedBook);
+
+    createdBook.name = createBookModel.name;
+    createdBook.description = createBookModel.description;
+    createdBook.price = createBookModel.price;
+    createdBook.status = createBookModel.status;
+    createdBook.currency = createBookModel.currency;
+    createdBook.type = createBookModel.type;
+    createdBook.author = createBookModel.author;
+
+    console.log(createBookModel);
+    return createBookModel;
   }
 
 //   public async editBook(book: EditBookModel): Promise<Book> {

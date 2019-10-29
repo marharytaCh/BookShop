@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param, Body, Res, HttpStatus, NotFoundException, Put, Query, Delete} from '@nestjs/common';
 import { BooksService } from 'src/services/books.service';
-import { CreateBook } from '../models/book.model';
+import { CreateBook } from '../models/createBook.model';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common';
 
@@ -13,9 +13,7 @@ export class BooksController {
   @ApiResponse({ status: 200, description: 'Return all books.'})
   @Get()
   public async getBooks() {
-    console.log('hello1');
     const booksArr = await this.booksService.getBooks();
-   
     return booksArr;
   }
 
@@ -35,8 +33,11 @@ export class BooksController {
 
   @Post()
   async addBook(@Body() createBook: CreateBook) {
-      const newBook = await this.booksService.addBook(createBook);
-      return newBook;
+    console.log('Enter in controller');
+    const newBook = await this.booksService.addBook(createBook);
+    console.log('controller')
+      console.log(newBook)
+    return newBook;
     }
 
   // // @Put()

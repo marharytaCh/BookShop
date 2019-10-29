@@ -5,6 +5,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AllExceptionFilter } from 'src/common/index';
 
 import { AppModule } from 'src/app.module';
+import { Environment, environment } from './environment';
+import * as mongoose from 'mongoose';
 
 async function bootstrap() {
 
@@ -13,6 +15,11 @@ async function bootstrap() {
   const fs = require('fs');
   const express = require('express');
   const server = express();
+  const env: Environment = environment();
+
+  mongoose.connect(env.connectionWithMongo,
+                  { useNewUrlParser: true,
+                    useUnifiedTopology: true });
 
   const app = await NestFactory.create(
     AppModule,

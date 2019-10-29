@@ -8,18 +8,23 @@ import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class BookRepo {
 
-  constructor(@InjectModel('Book') public readonly bookModel: Model<Book>) {}
-  // public bookModel: Model<Book> = mongoose.model('Book', BookSchema);
+  constructor(// this.bookModel = mongoose.model('Book', BookSchema,
+    // @InjectModel('Book') public readonly bookModel: Model<Book>
+    ) {}
+    private readonly bookModel: Model<Book> = mongoose.model('Book', BookSchema);
 
   public async getBook(): Promise<Book[]> {
-    console.log('hello4');
     const books: Book[] = await this.bookModel.find().exec();
-    console.log('hello'); // = mongoose.model('Book', BookSchema)
     return books;
   }
 
   public async addBook(createBook: Book): Promise<Book> {
-    const newBook: Book = await new this.bookModel(createBook).save();
+    console.log('Repo createBook');
+    console.log(createBook);
+    const createdBook: Model<Book> = new this.bookModel(createBook);
+    console.log('Repo createdBook');
+    console.log(createdBook);
+    const newBook: Book = createdBook.save();
     return newBook;
   }
 
