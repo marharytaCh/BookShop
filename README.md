@@ -6,9 +6,9 @@ Online store of a printing edition (books, magazines, newspapers), with a person
 
 ## The project used
 
-*Nest.js
-*Mongo.BD
-*npm
+* Nest.js
+* Mongo.BD
+* npm
 
 
 ```bash
