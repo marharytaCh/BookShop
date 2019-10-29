@@ -18,7 +18,7 @@ export class BooksService {
 
     for (const book of books) {
       const bookModel: BookModel = {} as BookModel;
-      bookModel.id = book.id;
+ 
       bookModel.id = book.id;
       bookModel.name = book.name;
       bookModel.description = book.description;
@@ -27,24 +27,30 @@ export class BooksService {
       bookModel.currency = book.currency;
       bookModel.type = book.type;
       bookModel.author = book.author;
+
       booksModel.push(bookModel);
     }
 
     return booksModel;
   }
 
-//   async getBookById(bookId: string): Promise<any> {
-//     const book: Book = await this.getBookById(bookId);
-//     const authorId = book.author;
-//     const author: Book = await this.getAuthorById(authorId);
-//     const completed = {
-//       book,
-//       author,
-//     };
-//     return completed;
-//   }
+  async getById(bookId: Book): Promise<BookModel> {
+    const book: BookModel = {} as BookModel;
+    const books: Book = await this.bookRepo.getById(bookId);
+    book.id = books.id;
+    book.name = books.name;
+    book.description = books.description;
+    book.price = books.price;
+    book.status = books.status;
+    book.currency = books.currency;
+    book.type = books.type;
+    book.author = books.author;
+
+    return book;
+  }
 
   public async addBook(createBookModel: CreateBook): Promise<Book> {
+
     const newBook: BookModel = {} as BookModel;
     const createdBook: Book = {} as Book;
     console.log('in book service');

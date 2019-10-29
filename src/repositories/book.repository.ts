@@ -38,10 +38,10 @@ export class BookRepo {
   //   return deletedBook;
   // }
 
-  // public async getBookById(bookId: Book): Promise<Book> {
-  //   const book: Book = await this.bookModel.findById(bookId.id).exec();
-  //   return book;
-  // }
+  public async getById(bookId: Book): Promise<Book> {
+    const book: Book = await this.bookModel.findById(bookId);
+    return book;
+  }
 
   // public async getBookByAuthor(authorId: string): Promise<Book> {
   //   const book: Book = await this.bookModel.findOneAndUpdate({author: authorId});

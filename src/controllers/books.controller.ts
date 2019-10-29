@@ -3,6 +3,8 @@ import { BooksService } from 'src/services/books.service';
 import { CreateBook } from '../models/createBook.model';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common';
+import { BookModel } from 'src/models';
+import { Book } from 'src/documents';
 
 @ApiUseTags('books')
 @Controller('books')
@@ -17,15 +19,12 @@ export class BooksController {
     return booksArr;
   }
 
-  // @Get(':bookId')
-  // async getBookById(@Res() res, @Param('bookId') bookId: string,
-  //   ) {
-  //   const book = await this.booksService.getBookById(bookId);
-  //   if (!book) {
-  //     throw new NotFoundException('Book does not exist');
-  //   }
-  //   return book;
-  // }
+  @Get(':bookId')
+  async getBookById(@Param('bookId') bookId: Book): Promise<BookModel> {
+    const book: BookModel = await this.booksService.getById(bookId);
+
+    return book;
+  }
 
   // @ApiOperation({ title: 'Create book' })
   // @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
