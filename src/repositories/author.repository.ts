@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Author, Book } from 'src/documents';
+import { Author, Book, AuthorSchema } from 'src/documents';
 import { Model } from 'mongoose';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class AuthorRepo {
@@ -10,39 +11,31 @@ export class AuthorRepo {
     // @InjectModel('Author') public authorModel: Model<Author>,
   ) {}
   private readonly bookModel: Model<Book>;
-  private readonly authorModel: Model<Author>;
+  private readonly authorModel: Model<Author> = mongoose.model('Author', AuthorSchema);
 
-  public async getAuthors() {
+  public async getAuthors(): Promise<Author[]> {
     const authors = await this.authorModel.find().exec();
     return authors;
   }
 
-  public async addAuthor(addAuthor: Author) {
-    const newAuthor = await new this.authorModel(addAuthor).save();
+  public async getById(authorId: Author): Promise<Author> {
+    const author: Author = await this.authorModel.findById(authorId);
+    return author;
+  }
+
+  public async addAuthor(addAuthorDocument: Author): Promise<Author> {
+    const newAuthorDocument: Model<Author> = new this.authorModel(addAuthorDocument);
+    const newAuthor: Author = await newAuthorDocument.save();
     return newAuthor;
   }
 
-  public async getAuthorById(authorId: Author) {
-    const author = await this.authorModel.findById(authorId.id);
-    return author;
-  }
-
-  public async editAuthor(editedAuthor: Author) {
-    return await this.authorModel.editedAuthor.save();
+  public async editAuthor(editedAuthor: Author): Promise<Author> {
+    const updatedAuthor: Author = await this.authorModel.findByIdAndUpdate(editedAuthor.id, editedAuthor);
+    return updatedAuthor;
   }
 
   public async deleteAuthor(authorId: Author) {
-    const deletedAuthor = await this.authorModel.deleteAuthor({_id: authorId}).exec();
+    const deletedAuthor: Author = await this.authorModel.findByIdAndRemove(authorId);
     return deletedAuthor;
-  }
-
-  public async getAuthor(authorId: Author) {
-    const author = await this.authorModel.findById(authorId.id);
-    return author;
-  }
-
-  public async getBookByAuthor(authorId: Author) {
-    const book = await this.bookModel.findOneAndUpdate({author: authorId.id});
-    return book;
   }
 }

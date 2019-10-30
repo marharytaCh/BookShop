@@ -4,72 +4,73 @@ import { Model } from 'mongoose';
 import { Author, Book } from 'src/documents';
 import { AuthorRepo } from 'src/repositories';
 import { CreateAuthorModel, EditAuthorModel } from 'src/models';
+import { AuthorModel } from 'src/models/author.model';
 
 @Injectable()
 export class AuthorService {
   constructor( public readonly authorRepo: AuthorRepo) {}
 
   public async getAuthors() {
-    const author = await this.authorRepo.getAuthors();
-    const allAutors = author.map(authors => ({
-      id: authors.id,
-      name: authors.name,
-    }));
-    return allAutors;
+    const authorsModel: AuthorModel[] = new Array<AuthorModel>();
+    const authors: Author[] = await this.authorRepo.getAuthors();
+
+    for (const author of authors) {
+      const authorModel: AuthorModel = {};
+
+      authorModel.id = author.id;
+      authorModel.name = author.name;
+
+      authorsModel.push(authorModel);
+    }
+
+    return authorsModel;
   }
 
-  public async addAuthor(author: CreateAuthorModel): Promise<Author> {
-    const createAutor: Author = {} as Author;
-    createAutor.name = author.name;
-    const createdAutor: Author = await this.authorRepo.addAuthor(createAutor);
-    return createdAutor;
-  }
+  public async getById(authorId: Author): Promise<AuthorModel> {
+    const author: AuthorModel = {};
+    const authors: Author = await this.authorRepo.getById(authorId);
 
-  public async getAuthorById(authorId: string): Promise<Author> {
-    const author: Author = await this.getAuthorById(authorId);
+    author.id = authors.id;
+    author.name = authors.name;
+
     return author;
   }
 
-  public async deleteAuthor(authorId: string) {
-    const author: Author = {} as Author;
-    author.id = authorId;
-    const deletedBook = await this.authorRepo.deleteAuthor(author);
-    await this.getBookByauthor(author.id);
-    return deletedBook;
+  public async addAuthor(addAuthorModel: CreateAuthorModel): Promise<Author> {
+    const createAutorDocument: Author = {};
+    const createdAuthor: AuthorModel = {};
+    createAutorDocument.name = addAuthorModel.name;
+
+    const authorDocumentCreated = await this.authorRepo.addAuthor(createAutorDocument);
+
+    createdAuthor.id = authorDocumentCreated.id;
+    createdAuthor.name = authorDocumentCreated.name;
+
+    return createdAuthor;
   }
 
-  public async editAuthor(author: EditAuthorModel): Promise<Author> {
-    const editAuthor: Author = {} as Author;
-    editAuthor.id = author.id;
-    editAuthor.name = author.name;
-    const editedAuthor: Author = await this.getAuthor(editAuthor.id);
-    if (editAuthor.name) {
-      editedAuthor.name = editedAuthor.name;
-    }
-    const newEditedAuthor: Author = await this.authorRepo.editAuthor(editedAuthor);
-    return newEditedAuthor;
+  public async edit(editAuthorModel: EditAuthorModel): Promise<Author> {
+    const editeAuthor: AuthorModel = {};
+    const editAuthorDocument: Author = {};
+
+    editAuthorDocument.id = editAuthorModel.id;
+    editAuthorDocument.name = editAuthorModel.name;
+
+    const updatedAuthor: Author = await this.authorRepo.editAuthor(editAuthorDocument);
+
+    editeAuthor.id = updatedAuthor.id;
+    editeAuthor.name = updatedAuthor.name;
+
+    return editeAuthor;
   }
 
-  private async getAuthor(id: string): Promise<Author> {
-    const author: Author = {} as Author;
-    author.id = id;
-    const authorById: Author = await this.authorRepo.getAuthorById(author);
-    return authorById;
-  }
+  public async delete(authorId: Author) {
+    const deletedAuthor: AuthorModel = {};
+    const deleteAuthorDocument: Author = await this.authorRepo.deleteAuthor(authorId);
 
-  public async getBookByauthor(authorId: string): Promise<Book> {
-    const author: Author = {} as Author;
-    author.id = authorId;
-    let bookAuthor: Author;
-    try {
-      bookAuthor = await this.authorRepo.getBookByAuthor(author);
-    } catch (error) {
-      throw new NotFoundException('Could not find book.');
-    }
-    if (!bookAuthor) {
-      throw new NotFoundException('Could not find book.');
-    }
-    return bookAuthor;
-  }
+    deletedAuthor.id = deleteAuthorDocument.id;
+    deletedAuthor.name = deleteAuthorDocument.name;
 
+    return deletedAuthor;
+  }
 }

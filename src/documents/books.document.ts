@@ -19,6 +19,5 @@ export const BookSchema = new mongoose.Schema({
     status: String,
     currency: String,
     type: String,
-    author: [{type: mongoose.Schema.Types.ObjectId, ref: 'Author'}],
+    author: String, // [{type: mongoose.Schema.Types.ObjectId, ref: 'Author'}],
 });
-

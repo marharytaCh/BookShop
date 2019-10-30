@@ -19,7 +19,8 @@ async function bootstrap() {
 
   mongoose.connect(env.connectionWithMongo,
                   { useNewUrlParser: true,
-                    useUnifiedTopology: true });
+                    useUnifiedTopology: true,
+                    useFindAndModify: false });
 
   const app = await NestFactory.create(
     AppModule,

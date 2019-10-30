@@ -3,7 +3,7 @@ import { BooksService } from 'src/services/books.service';
 import { CreateBook } from '../models/createBook.model';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { ValidateObjectId } from 'src/common';
-import { BookModel } from 'src/models';
+import { BookModel, EditAuthorModel, EditBookModel } from 'src/models';
 import { Book } from 'src/documents';
 
 @ApiUseTags('books')
@@ -14,49 +14,42 @@ export class BooksController {
   @ApiOperation({ title: 'Get all books' })
   @ApiResponse({ status: 200, description: 'Return all books.'})
   @Get()
-  public async getBooks() {
+  public async getAll() {
     const booksArr = await this.booksService.getBooks();
     return booksArr;
   }
 
-  @Get(':bookId')
-  async getBookById(@Param('bookId') bookId: Book): Promise<BookModel> {
-    const book: BookModel = await this.booksService.getById(bookId);
-
+  @Get(':id')
+  async getBookById(@Param('bookId') id: Book): Promise<BookModel> {
+    const book: BookModel = await this.booksService.getById(id);
     return book;
   }
 
-  // @ApiOperation({ title: 'Create book' })
-  // @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
-  // @ApiResponse({ status: 403, description: 'Forbidden.' })
-
+  @ApiOperation({ title: 'Create book' })
+  @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post()
-  async addBook(@Body() createBook: CreateBook) {
-    console.log('Enter in controller');
-    const newBook = await this.booksService.addBook(createBook);
-    console.log('controller')
-      console.log(newBook)
-    return newBook;
+  async addBook(@Body() createBookModel: CreateBook): Promise<BookModel> {
+    const addedBook: BookModel = await this.booksService.addBook(createBookModel);
+
+    return addedBook;
     }
 
-  // // @Put()
-  // //   async editBook(
-  // //     @Query('bookId', new ValidateObjectId()) bookId,
-  // //     @Body() createBook: CreateBook,
-  // //     ) {
-  // //       const editedBook = await this.booksService.editBook(bookId, createBook);
-  // //       if (!editedBook) {
-  // //       throw new NotFoundException('Book does not exist');
-  // //       }
-  // //       return editedBook;
-  // //   }
-  //   // @Delete('')
-  //   //   async deleteBook(@Param('id') bookId: string,
-  //   //   ) {
-  //   //     const deletedBook = await this.booksService.deleteBook(bookId);
-  //   //     if (!deletedBook) {
-  //   //       throw new NotFoundException('Book does not exist');
-  //   //     }
-  //   //     return deletedBook;
-  //   //   }
+  @Put()
+  @ApiOperation({ title: 'Update book by id'})
+    async editBook(@Body() updateBookModel: EditBookModel) {
+      const editedBook: Book = await this.booksService.edit(updateBookModel);
+      return editedBook;
+    }
+
+  @Delete(':id')
+    async deleteBook(@Param('id') id: string): Promise<Book> {
+    const deletedBook: BookModel = await this.booksService.deleteBook(id);
+    return deletedBook;
+   }
+
+   @Get(':offset/:limit')
+   public async getPaginatedBooks(@Param('offset') offset: string, @Param('limit') limit: string): Promise<any>{
+     // const bookModels: BookModel[] = await this.booksService.getPagination()
+   }
 }

@@ -3,6 +3,7 @@ import { Controller, Get, Post, Body, Param, Put, Delete} from '@nestjs/common';
 import { AuthorService } from 'src/services';
 import { Author } from 'src/documents';
 import { CreateAuthorModel, EditAuthorModel } from 'src/models';
+import { AuthorModel } from 'src/models/author.model';
 
 @ApiUseTags('Author created on mongo')
 @Controller('authors')
@@ -18,29 +19,30 @@ export class AuthorController {
 
   @Get(':id')
   @ApiOperation({title: 'Getting all authors by id'})
-  public async get(@Param('id') authorId: string): Promise<Author> {
-    const author: Author = await this.authorService.getAuthorById(authorId);
+  public async get(@Param('id') id: Author): Promise<Author> {
+    const author: AuthorModel = await this.authorService.getById(id);
     return author;
   }
 
   @Post()
   @ApiOperation({title: 'Creating author'})
-  public async adding(@Body() addAuthor: CreateAuthorModel): Promise<Author> {
-    const newAuthor = await this.authorService.addAuthor(addAuthor);
-    return newAuthor;
-  }
+  public async addAuthor(@Body() addAuthorModel: CreateAuthorModel): Promise<Author> {
+    const newAuthor = await this.authorService.addAuthor(addAuthorModel);
 
-  @Delete(':id')
-  @ApiOperation({title: 'Delete author by id'})
-  public async delete(@Param('id') authorId: string): Promise<boolean> {
-    await this.authorService.deleteAuthor(authorId);
-    return true;
+    return newAuthor;
   }
 
   @Put()
   @ApiOperation({title: 'Edit information about author'})
-  public async edit(@Body() editAuthor: EditAuthorModel): Promise<Author> {
-    const author  = await this.authorService.editAuthor(editAuthor);
-    return author;
+  public async edit(@Body() editAuthorModel: EditAuthorModel): Promise<Author> {
+    const editedAuthor: Author = await this.authorService.edit(editAuthorModel);
+    return editedAuthor;
+  }
+
+  @Delete(':id')
+  @ApiOperation({title: 'Delete author by id'})
+  public async delete(@Param('id') id: Author): Promise<Author> {
+    const deletedAuthor = await this.authorService.delete(id);
+    return deletedAuthor;
   }
 }
