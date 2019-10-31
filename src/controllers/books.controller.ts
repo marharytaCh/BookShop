@@ -2,7 +2,6 @@ import { Controller, Get, Post, Param, Body, Res, HttpStatus, NotFoundException,
 import { BooksService } from 'src/services/books.service';
 import { CreateBook } from '../models/createBook.model';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { ValidateObjectId } from 'src/common';
 import { BookModel, EditAuthorModel, EditBookModel } from 'src/models';
 import { Book } from 'src/documents';
 
@@ -14,7 +13,7 @@ export class BooksController {
   @ApiOperation({ title: 'Get all books' })
   @ApiResponse({ status: 200, description: 'Return all books.'})
   @Get()
-  public async getAll() {
+  public async getAll(): Promise<Book[]> {
     const booksArr = await this.booksService.getBooks();
     return booksArr;
   }
@@ -49,7 +48,8 @@ export class BooksController {
    }
 
    @Get(':offset/:limit')
-   public async getPaginatedBooks(@Param('offset') offset: string, @Param('limit') limit: string): Promise<any> {
-     // const bookModels: BookModel[] = await this.booksService.getPagination()
+   public async getPaginatedBooks(@Param('offset') offset: string, @Param('limit') limit: string): Promise<BookModel[]> {
+    const books = await this.booksService.getPaginatedBooks(+offset, +limit);
+    return books;
    }
 }

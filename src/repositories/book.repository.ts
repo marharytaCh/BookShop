@@ -46,6 +46,10 @@ export class BookRepo {
     const book: Book = await this.bookModel.findById(bookId.id).exec();
 
     return book;
-}
+  }
 
+  public async getPagination(offset: number, limit: number): Promise<Book[]> {
+    const books: Book[] = await this.bookModel.find().skip(offset).limit(limit).exec();
+    return books;
+  }
 }

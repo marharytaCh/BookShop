@@ -73,4 +73,19 @@ export class AuthorService {
 
     return deletedAuthor;
   }
+
+  public async getPaginatedAuthors(offset: number, limit: number): Promise<AuthorModel[]> {
+    const authorsModel: AuthorModel[] = new Array<AuthorModel>();
+    const authorDocument: Author[] = await this.authorRepo.getPagination(offset, limit);
+
+    for (const author of authorDocument) {
+      const authorModel: AuthorModel = {};
+
+      authorModel.id = author.id;
+      authorModel.name = author.name;
+
+      authorsModel.push(authorModel);
+    }
+    return authorsModel;
+  }
 }

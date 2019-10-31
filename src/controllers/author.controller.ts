@@ -45,4 +45,10 @@ export class AuthorController {
     const deletedAuthor = await this.authorService.delete(id);
     return deletedAuthor;
   }
+
+  @Get(':offset/:limit')
+  public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<AuthorModel[]> {
+    const authors = await this.authorService.getPaginatedAuthors(+offset, +limit);
+    return authors;
+  }
 }

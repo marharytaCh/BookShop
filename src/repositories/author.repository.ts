@@ -6,10 +6,7 @@ import * as mongoose from 'mongoose';
 
 @Injectable()
 export class AuthorRepo {
-  constructor(
-    // @InjectModel('Book') public bookModel: Model<Book>,
-    // @InjectModel('Author') public authorModel: Model<Author>,
-  ) {}
+  constructor( ) {}
   private readonly bookModel: Model<Book>;
   private readonly authorModel: Model<Author> = mongoose.model('Author', AuthorSchema);
 
@@ -37,5 +34,10 @@ export class AuthorRepo {
   public async deleteAuthor(authorId: Author) {
     const deletedAuthor: Author = await this.authorModel.findByIdAndRemove(authorId);
     return deletedAuthor;
+  }
+
+  public async getPagination(offset: number, limit: number): Promise<Author[]> {
+    const authors: Author[] = await this.authorModel.find().skip(offset).limit(limit).exec();
+    return authors;
   }
 }

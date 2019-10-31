@@ -10,7 +10,7 @@ import { BookModel } from 'src/models/book.model';
 export class BooksService {
   constructor(public readonly bookRepo: BookRepo) {}
 
-  public async getBooks(): Promise<any> {
+  public async getBooks(): Promise<Book[]> {
     const booksModel: BookModel[] = new Array<BookModel>();
     const books: Book[] = await this.bookRepo.getBook();
 
@@ -29,7 +29,7 @@ export class BooksService {
       booksModel.push(bookModel);
     }
 
-    return {booksModel, total: booksModel.length};
+    return booksModel;
   }
 
   public async getById(bookId: Book): Promise<BookModel> {
@@ -113,5 +113,26 @@ export class BooksService {
     deletedBook.author = deleteBookDocument.author;
 
     return deletedBook;
+  }
+
+  public async getPaginatedBooks(offset: number, limit: number): Promise<BookModel[]> {
+    const booksModel: BookModel[] = new Array<BookModel>();
+    const bookDocument: Book[] = await this.bookRepo.getPagination(offset, limit);
+
+    for (const book of bookDocument) {
+      const bookModel: BookModel = {} ;
+
+      bookModel.id = book.id;
+      bookModel.name = book.name;
+      bookModel.description = book.description;
+      bookModel.price = book.price;
+      bookModel.status = book.status;
+      bookModel.currency = book.currency;
+      bookModel.type = book.type;
+      bookModel.author = book.author;
+
+      booksModel.push(bookModel);
+    }
+    return booksModel;
   }
 }
