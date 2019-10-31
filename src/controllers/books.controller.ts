@@ -49,7 +49,7 @@ export class BooksController {
    }
 
    @Get(':offset/:limit')
-   public async getPaginatedBooks(@Param('offset') offset: string, @Param('limit') limit: string): Promise<any>{
+   public async getPaginatedBooks(@Param('offset') offset: string, @Param('limit') limit: string): Promise<any> {
      // const bookModels: BookModel[] = await this.booksService.getPagination()
    }
 }
