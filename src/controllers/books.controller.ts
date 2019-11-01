@@ -14,12 +14,12 @@ export class BooksController {
   @ApiResponse({ status: 200, description: 'Return all books.'})
   @Get()
   public async getAll(): Promise<Book[]> {
-    const booksArr = await this.booksService.getBooks();
+    const booksArr = await this.booksService.getAll();
     return booksArr;
   }
 
   @Get(':id')
-  async getBookById(@Param('bookId') id: Book): Promise<BookModel> {
+  async getById(@Param('bookId') id: Book): Promise<BookModel> {
     const book: BookModel = await this.booksService.getById(id);
     return book;
   }
@@ -28,7 +28,7 @@ export class BooksController {
   @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post()
-  async addBook(@Body() createBookModel: CreateBook): Promise<BookModel> {
+  async add(@Body() createBookModel: CreateBook): Promise<BookModel> {
     const addedBook: BookModel = await this.booksService.addBook(createBookModel);
 
     return addedBook;
@@ -36,19 +36,19 @@ export class BooksController {
 
   @Put()
   @ApiOperation({ title: 'Update book by id'})
-    async editBook(@Body() updateBookModel: EditBookModel) {
+    async edit(@Body() updateBookModel: EditBookModel) {
       const editedBook: Book = await this.booksService.edit(updateBookModel);
       return editedBook;
     }
 
   @Delete(':id')
-    async deleteBook(@Param('id') id: string): Promise<Book> {
-    const deletedBook: BookModel = await this.booksService.deleteBook(id);
+    async delete(@Param('id') id: string): Promise<Book> {
+    const deletedBook: BookModel = await this.booksService.delete(id);
     return deletedBook;
    }
 
    @Get(':offset/:limit')
-   public async getPaginatedBooks(@Param('offset') offset: string, @Param('limit') limit: string): Promise<BookModel[]> {
+   public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<BookModel[]> {
     const books = await this.booksService.getPaginatedBooks(+offset, +limit);
     return books;
    }
