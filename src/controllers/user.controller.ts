@@ -9,9 +9,9 @@ export class UserController {
   constructor(
     private userService: UserService,
   ) {}
-@Get()
-public async getAll() {
-  const users = await this.userService.getAllUsers();
-  console.log(users);
-}
+  @Get()
+  public async getAll() {
+  // const users = await this.userService.getAllUsers();
+  // console.log(users);
+  }
 }

@@ -11,7 +11,7 @@ export class BookRepo {
   constructor() {}
   private readonly bookModel: Model<Book> = mongoose.model('Book', BookSchema);
 
-  public async getBooks(): Promise<Book[]> {
+  public async getAll(): Promise<Book[]> {
     const books: Book[] = await this.bookModel.find().exec();
 
     return books;
@@ -23,6 +23,12 @@ export class BookRepo {
     return book;
   }
 
+  public async getPagination(offset: number, limit: number): Promise<Book[]> {
+    const books: Book[] = await this.bookModel.find().skip(offset).limit(limit).exec();
+
+    return books;
+  }
+
   public async addBook(bookDocument: Book): Promise<Book> {
     const createdBookDocument: Model<Book> = new this.bookModel(bookDocument);
     const createdBook: Book = await createdBookDocument.save();
@@ -30,8 +36,8 @@ export class BookRepo {
     return createdBook;
   }
 
-  public async edit(editBookDocument: Book): Promise<Book> {
-    const updatedBook: Book = await this.bookModel.findByIdAndUpdate(editBookDocument.id, editBookDocument);
+  public async update(updateBookDocument: Book): Promise<Book> {
+    const updatedBook: Book = await this.bookModel.findByIdAndUpdate(updateBookDocument.id, updateBookDocument);
 
     return updatedBook;
   }
@@ -46,10 +52,5 @@ export class BookRepo {
     const book: Book = await this.bookModel.findById(bookId.id).exec();
 
     return book;
-  }
-
-  public async getPagination(offset: number, limit: number): Promise<Book[]> {
-    const books: Book[] = await this.bookModel.find().skip(offset).limit(limit).exec();
-    return books;
   }
 }

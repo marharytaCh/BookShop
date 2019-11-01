@@ -6,11 +6,6 @@ import { AllExceptionFilter } from 'src/common/exception.filter';
 import { RolesGuard } from 'src/common/roles/roles.guard';
 import { Roles } from 'src/common/roles/roles.decorator';
 
-export interface Token {
-  accessToken: string;
-  refreshToken: string;
-}
-
 @ApiBearerAuth()
 @ApiUseTags('Authentification')
 @Controller('auth')
@@ -18,7 +13,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @UseFilters(new AllExceptionFilter())
-
   @UseGuards(AuthGuard('local'))
   @Post('login')
   public async login(@Body() req) {
@@ -33,7 +27,6 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('person')
-  // @Roles('user')
   getProfile(@Request() req) {
     console.log(req);
     return req.body;

@@ -1,6 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 
-export class EditBookModel {
+export class UpdateBookModel {
     @ApiModelProperty()
     id: string;
     @ApiModelProperty()

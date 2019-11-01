@@ -13,7 +13,6 @@ export class AppController {
   getEnvironment(): any {
     const result = environment();
     return result;
-    // this.appService.getHello()
   }
 
 }

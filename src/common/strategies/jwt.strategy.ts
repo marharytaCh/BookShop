@@ -12,12 +12,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         ignoreExpiration: false,
-        secretOrKey: env.tokenSecret, // here must be token from Env
+        secretOrKey: env.tokenSecret,
     });
   }
 
   async validate(payload: User) {
-    const user = await { userId: payload.userId, username: payload.username, role: payload.role };
+    const user = await { userId: payload.id, username: payload.username, role: payload.userRole };
     if (!user) {
       throw new UnauthorizedException();
     }

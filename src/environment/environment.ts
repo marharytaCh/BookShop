@@ -1,7 +1,4 @@
-// imports
-import { Environment } from './environment.model';
-import { dev } from './environment.dev';
-import { prod } from './environment.prod';
+import { Environment, dev, prod } from 'src/environment';
 
 const env = process.env.NODE_ENV;
 export const environment = (): Environment => {
@@ -9,6 +6,6 @@ export const environment = (): Environment => {
         case 'production':
             return prod;
         default:
-         return dev ;
+            return dev ;
        }
   };
