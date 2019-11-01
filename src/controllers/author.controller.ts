@@ -13,7 +13,7 @@ export class AuthorController {
   @Get()
   @ApiOperation({title: 'Getting all authors'})
   public async getAll() {
-    const authors = await this.authorService.getAuthors();
+    const authors = await this.authorService.getAll();
     return authors;
   }
 

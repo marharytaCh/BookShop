@@ -11,7 +11,7 @@ export class BookRepo {
   constructor() {}
   private readonly bookModel: Model<Book> = mongoose.model('Book', BookSchema);
 
-  public async getBook(): Promise<Book[]> {
+  public async getBooks(): Promise<Book[]> {
     const books: Book[] = await this.bookModel.find().exec();
 
     return books;
@@ -36,7 +36,7 @@ export class BookRepo {
     return updatedBook;
   }
 
-  public async deleteBook(id: string): Promise<Book> {
+  public async delete(id: string): Promise<Book> {
     const deletedBook: Book = await this.bookModel.findByIdAndRemove(id);
 
     return deletedBook;

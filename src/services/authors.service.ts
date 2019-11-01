@@ -10,7 +10,7 @@ import { AuthorModel } from 'src/models/author.model';
 export class AuthorService {
   constructor( public readonly authorRepo: AuthorRepo) {}
 
-  public async getAuthors() {
+  public async getAll() {
     const authorsModel: AuthorModel[] = new Array<AuthorModel>();
     const authors: Author[] = await this.authorRepo.getAuthors();
 

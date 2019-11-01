@@ -10,9 +10,9 @@ import { BookModel } from 'src/models/book.model';
 export class BooksService {
   constructor(public readonly bookRepo: BookRepo) {}
 
-  public async getBooks(): Promise<Book[]> {
+  public async getAll(): Promise<Book[]> {
     const booksModel: BookModel[] = new Array<BookModel>();
-    const books: Book[] = await this.bookRepo.getBook();
+    const books: Book[] = await this.bookRepo.getBooks();
 
     for (const book of books) {
       const bookModel: BookModel = {} ;
@@ -99,9 +99,9 @@ export class BooksService {
     return editeBook;
   }
 
-  async deleteBook(bookId: string): Promise<Book> {
+  async delete(bookId: string): Promise<Book> {
     const deletedBook: BookModel = {};
-    const deleteBookDocument: Book  = await this.bookRepo.deleteBook(bookId);
+    const deleteBookDocument: Book  = await this.bookRepo.delete(bookId);
 
     deletedBook.id = deleteBookDocument.id;
     deletedBook.name = deleteBookDocument.name;
