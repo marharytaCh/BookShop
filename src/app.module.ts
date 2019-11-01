@@ -15,7 +15,7 @@ import { Environment, environment } from 'src/environment/index';
 
 import { BookSchema } from 'src/documents';
 
-import { AuthorRepo, BookRepo } from 'src/repositories';
+import { AuthorRepo, BookRepo, UserRepo } from 'src/repositories';
 
 const env: Environment = environment();
 @Module({
@@ -28,7 +28,7 @@ const env: Environment = environment();
         ),
       ],
   controllers: [AppController, BooksController, UserController, AuthController, AuthorController],
-  providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy, BookRepo, AuthorRepo,
+  providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy, BookRepo, AuthorRepo, UserRepo,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

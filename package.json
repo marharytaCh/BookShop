@@ -29,6 +29,7 @@
     "@nestjs/swagger": "^3.1.0",
     "@nestjsx/crud": "^4.2.0",
     "@types/joi": "^14.3.3",
+    "bcrypt": "^3.0.6",
     "crud": "0.0.28",
     "dotenv": "^8.1.0",
     "fs-extra": "^8.1.0",

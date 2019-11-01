@@ -5,6 +5,7 @@ import { AuthService } from 'src/services/index';
 import { AllExceptionFilter } from 'src/common/exception.filter';
 import { RolesGuard } from 'src/common/roles/roles.guard';
 import { Roles } from 'src/common/roles/roles.decorator';
+import { Token } from 'src/models/token.model';
 
 @ApiBearerAuth()
 @ApiUseTags('Authentification')

@@ -1,17 +1,26 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from 'src/services';
-import { User } from 'src/models';
+import { UserModel, CreateUserModel } from 'src/models';
+import { User } from 'src/documents';
 
 @ApiUseTags('Users table')
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(
     private userService: UserService,
   ) {}
   @Get()
-  public async getAll() {
-  // const users = await this.userService.getAllUsers();
-  // console.log(users);
+  public async getAll(): Promise<UserModel[]> {
+    const users: UserModel[] = await this.userService.getAll();
+
+    return users;
+  }
+
+  @Post()
+  public async addUser(@Body() userModel: CreateUserModel) {
+    const user: User = await this.userService.addUser(userModel);
+
+    return user;
   }
 }

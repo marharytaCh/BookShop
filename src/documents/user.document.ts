@@ -8,13 +8,14 @@ export interface User extends mongoose.Document {
     username?: string;
     passwordHash?: string;
     salt?: string;
-    role?: string;
+    userRole?: string;
 }
 
 export const UserSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
+  username: String,
   passwordHash: String,
   salt: String,
-  role: String,
+  userRole: String,
 });
