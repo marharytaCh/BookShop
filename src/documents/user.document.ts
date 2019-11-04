@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { AuthorSchema } from 'src/documents/authors.document';
 
-export interface User extends mongoose.Document {
+export interface UserDocument extends mongoose.Document {
     id?: string;
     firstName?: string;
     lastName?: string;

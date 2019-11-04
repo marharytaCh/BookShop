@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from 'src/services';
 import { UserModel, CreateUserModel } from 'src/models';
-import { User } from 'src/documents';
+import { UserDocument } from 'src/documents';
 
 @ApiUseTags('Users table')
 @Controller('users')
@@ -19,7 +19,7 @@ export class UserController {
 
   @Post()
   public async addUser(@Body() userModel: CreateUserModel) {
-    const user: User = await this.userService.addUser(userModel);
+    const user: UserDocument = await this.userService.addUser(userModel);
 
     return user;
   }
