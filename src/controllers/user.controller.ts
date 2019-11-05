@@ -25,6 +25,13 @@ export class UserController {
     return user;
   }
 
+  @Get(':offset/:limit')
+  public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string) {
+    const users = await this.userService.getPagination(+offset, +limit);
+
+    return users;
+  }
+
   @Post()
   public async addUser(@Body() userModel: CreateUserModel): Promise<UserModel> {
     const user: UserDocument = await this.userService.addUser(userModel);

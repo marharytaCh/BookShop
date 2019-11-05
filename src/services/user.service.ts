@@ -41,6 +41,22 @@ export class UserService {
     return userModel;
   }
 
+  public async getPagination(offset: number, limit: number) {
+    const usersModel: UserModel[] = new Array<UserModel>();
+    const userDocument: UserDocument[] = await this.userRepo.getPagination(offset, limit);
+    for (const user of userDocument) {
+      const userModel: UserModel = {};
+      userModel.id = user.id;
+      userModel.firstName = user.firstName;
+      userModel.lastName = user.lastName;
+      userModel.username = user.username;
+      userModel.userRole = user.userRole;
+      usersModel.push(userModel);
+    }
+
+    return usersModel;
+  }
+
   public async addUser(userModel: UserModel): Promise<UserModel> {
     const createUserDocument: UserDocument = {};
     createUserDocument.firstName = userModel.firstName;

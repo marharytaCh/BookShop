@@ -22,6 +22,12 @@ export class UserRepo {
     return(user);
   }
 
+  public async getPagination(offset: number, limit: number): Promise<UserDocument[]> {
+    const users: UserDocument[] = await this.userModel.find().skip(offset).limit(limit).exec();
+
+    return users;
+  }
+
   public async addUser(createUserDocument: UserDocument) {
     const userDocument: Model<UserDocument> = new this.userModel(createUserDocument);
     const newUser: UserDocument = await userDocument.save();
