@@ -4,6 +4,6 @@ export interface UserModel {
     lastName?: string;
     username?: string;
     passwordHash?: string;
-    salt?: string;
+    passwordSalt?: string;
     userRole?: string;
   }

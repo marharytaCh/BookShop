@@ -17,11 +17,15 @@ export class UserRepo {
   }
 
   public async addUser(createUserDocument: UserDocument) {
-    console.log(createUserDocument);
     const userDocument: Model<UserDocument> = new this.userModel(createUserDocument);
-    console.log(userDocument);
     const newUser: UserDocument = await userDocument.save();
 
     return newUser;
+  }
+
+  public async update(updateUserDocument: UserDocument) {
+    const updatedUser: UserDocument = await this.userModel.findByIdAndUpdate(updateUserDocument.id, updateUserDocument);
+
+    return updatedUser;
   }
 }

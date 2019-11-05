@@ -7,7 +7,7 @@ export interface UserDocument extends mongoose.Document {
     lastName?: string;
     username?: string;
     passwordHash?: string;
-    salt?: string;
+    passwordSalt?: string;
     userRole?: string;
 }
 
@@ -16,6 +16,6 @@ export const UserSchema = new mongoose.Schema({
   lastName: String,
   username: String,
   passwordHash: String,
-  salt: String,
+  passwordSalt: String,
   userRole: String,
 });

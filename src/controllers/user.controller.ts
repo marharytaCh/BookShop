@@ -1,7 +1,7 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from 'src/services';
-import { UserModel, CreateUserModel } from 'src/models';
+import { UserModel, CreateUserModel, UpdateUserModel } from 'src/models';
 import { UserDocument } from 'src/documents';
 
 @ApiUseTags('Users table')
@@ -18,9 +18,16 @@ export class UserController {
   }
 
   @Post()
-  public async addUser(@Body() userModel: CreateUserModel) {
+  public async addUser(@Body() userModel: CreateUserModel): Promise<UserModel> {
     const user: UserDocument = await this.userService.addUser(userModel);
 
     return user;
   }
+
+  // @Put()
+  // async update(@Body() updateUserModel: UpdateUserModel) {
+  //   const updatedUser = await this.userService.update(updateUserModel);
+
+  //   return updatedUser;
+  // }
 }

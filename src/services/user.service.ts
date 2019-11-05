@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 
-import { UserModel } from 'src/models';
+import { UserModel, UpdateUserModel } from 'src/models';
 import { UserRepo } from 'src/repositories';
-import { User } from 'src/documents';
-import * as bcrypt from 'bcrypt';
+import { UserDocument } from 'src/documents';
+import { Hash } from 'src/common';
 
 @Injectable()
 export class UserService {
-  constructor(public readonly userRepo: UserRepo) {}
+  constructor(public readonly userRepo: UserRepo,
+              @Inject(forwardRef(() => Hash))
+              private readonly passwordHelper: Hash) {}
 
   public async getAll() {
     const usersModel: UserModel[] = new Array<UserModel>();
-    const users: User[] = await this.userRepo.getAll();
+    const users: UserDocument[] = await this.userRepo.getAll();
     for (const user of users) {
       const userModel: UserModel = {};
       userModel.id = user.id;
@@ -19,7 +21,7 @@ export class UserService {
       userModel.lastName = user.lastName;
       userModel.username = user.username;
       userModel.passwordHash = user.passwordHash;
-      userModel.salt = user.salt;
+      userModel.passwordSalt = user.passwordSalt;
       userModel.userRole = user.userRole;
       usersModel.push(userModel);
     }
@@ -27,15 +29,14 @@ export class UserService {
     return usersModel;
   }
 
-  public async addUser(userModel: UserModel) {
-    console.log('service')
-    const createUserDocument: User = {};
+  public async addUser(userModel: UserModel): Promise<UserModel> {
+    const createUserDocument: UserDocument = {};
     createUserDocument.firstName = userModel.firstName;
     createUserDocument.lastName = userModel.lastName;
     createUserDocument.username = userModel.username;
-    createUserDocument.passwordHash = userModel.passwordHash;
-    createUserDocument.salt = userModel.salt;
-    createUserDocument.userRole = userModel.userRole;
+    // createUserDocument.passwordSalt = await this.passwordHelper.getSalt();
+    createUserDocument.passwordHash = await this.passwordHelper.getHashing(userModel.passwordHash, createUserDocument.passwordSalt);
+    // createUserDocument.userRole = userModel.userRole;
 
     const createdUserDocument = await this.userRepo.addUser(createUserDocument);
     const createdUserModel: UserModel = {};
@@ -43,13 +44,24 @@ export class UserService {
     createdUserModel.firstName = createdUserDocument.firstName;
     createdUserModel.lastName = createdUserDocument.lastName;
     createdUserModel.username = createdUserDocument.username;
+    createdUserModel.passwordSalt = createdUserDocument.passwordSalt;
     createdUserModel.passwordHash = createdUserDocument.passwordHash;
-    createdUserModel.salt = createdUserDocument.salt;
     createdUserModel.userRole = createdUserDocument.userRole;
 
-    const hashedPassword = await bcrypt.hash(createdUserModel.passwordHash, 10)
-    console.log(hashedPassword);
-    console.log(createdUserModel);
     return createdUserModel;
   }
+
+  // public async update(updateUserModel: UpdateUserModel) {
+  //   const updateUserDocument: UserDocument = {};
+  //   updateUserDocument.id = updateUserModel.id;
+  //   updateUserDocument.firstName = updateUserModel.firstName;
+  //   updateUserDocument.lastName = updateUserModel.lastName;
+  //   updateUserDocument.username = updateUserModel.username;
+  //   updateUserDocument.passwordHash = updateUserModel.passwordHash;
+  //   updateUserDocument.passwordSalt = updateUserModel.passwordSalt;
+
+  //   const updateUser: UserModel = {};
+  //   const updatedUserDocument = await this.userRepo.update(updateUserDocument);
+  //   updateUser
+  // }
 }
