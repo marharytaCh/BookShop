@@ -10,7 +10,5 @@ export class UpdateUserModel {
     @ApiModelProperty()
     username?: string;
     @ApiModelProperty()
-    passwordHash?: string;
-    @ApiModelProperty()
-    passwordSalt?: string;
+    password?: string;
 }

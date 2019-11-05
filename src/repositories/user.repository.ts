@@ -16,6 +16,12 @@ export class UserRepo {
     return books;
   }
 
+  public async getById(userId: UserDocument): Promise<UserDocument> {
+    const user: UserDocument = await this.userModel.findById(userId);
+
+    return(user);
+  }
+
   public async addUser(createUserDocument: UserDocument) {
     const userDocument: Model<UserDocument> = new this.userModel(createUserDocument);
     const newUser: UserDocument = await userDocument.save();
@@ -27,5 +33,11 @@ export class UserRepo {
     const updatedUser: UserDocument = await this.userModel.findByIdAndUpdate(updateUserDocument.id, updateUserDocument);
 
     return updatedUser;
+  }
+
+  public async delete(userId: string) {
+    const deletedUser: UserDocument = await this.userModel.findByIdAndRemove(userId);
+
+    return deletedUser;
   }
 }

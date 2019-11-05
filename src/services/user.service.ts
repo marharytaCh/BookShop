@@ -4,6 +4,7 @@ import { UserModel, UpdateUserModel } from 'src/models';
 import { UserRepo } from 'src/repositories';
 import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -27,6 +28,19 @@ export class UserService {
     return usersModel;
   }
 
+  public async getById(userId: UserDocument) {
+    const userModel: UserModel = {};
+    const userDocument = await this.userRepo.getById(userId);
+    userModel.id = userDocument.id;
+    userModel.firstName = userDocument.firstName;
+    userModel.lastName = userDocument.lastName;
+    userModel.username = userDocument.username;
+    userModel.userRole = userDocument.userRole;
+    userModel.password = userDocument.password;
+    console.log(userDocument.password)
+    return userModel;
+  }
+
   public async addUser(userModel: UserModel): Promise<UserModel> {
     const createUserDocument: UserDocument = {};
     createUserDocument.firstName = userModel.firstName;
@@ -47,17 +61,32 @@ export class UserService {
     return createdUserModel;
   }
 
-  // public async update(updateUserModel: UpdateUserModel) {
-  //   const updateUserDocument: UserDocument = {};
-  //   updateUserDocument.id = updateUserModel.id;
-  //   updateUserDocument.firstName = updateUserModel.firstName;
-  //   updateUserDocument.lastName = updateUserModel.lastName;
-  //   updateUserDocument.username = updateUserModel.username;
-  //   updateUserDocument.passwordHash = updateUserModel.passwordHash;
-  //   updateUserDocument.passwordSalt = updateUserModel.passwordSalt;
+  public async update(updateUserModel: UpdateUserModel) {
+    const updateUserDocument: UserDocument = {};
+    updateUserDocument.id = updateUserModel.id;
+    updateUserDocument.firstName = updateUserModel.firstName;
+    updateUserDocument.lastName = updateUserModel.lastName;
+    updateUserDocument.username = updateUserModel.username;
+    updateUserDocument.passwordSalt = await this.passwordHelper.getSalt();
+    updateUserDocument.passwordHash = await this.passwordHelper.getHashing(updateUserModel.password, updateUserDocument.passwordSalt);
 
-  //   const updateUser: UserModel = {};
-  //   const updatedUserDocument = await this.userRepo.update(updateUserDocument);
-  //   updateUser
-  // }
+    const updateUser: UserModel = {};
+    const updatedUserDocument = await this.userRepo.update(updateUserDocument);
+    updateUser.id = updatedUserDocument.id;
+    updateUser.firstName = updatedUserDocument.firstName;
+    updateUser.lastName = updatedUserDocument.lastName;
+    updateUser.username = updatedUserDocument.username;
+    updateUser.userRole = updatedUserDocument.userRole;
+
+    return updateUser;
+  }
+
+  public async delete(userId: string) {
+    const deletedUser: UserModel = {};
+    const deletedUserDocument = await this.userRepo.delete(userId);
+    deletedUser.id = deletedUserDocument.id;
+    deletedUser.firstName = deletedUserDocument.firstName;
+
+    return deletedUser;
+  }
 }
