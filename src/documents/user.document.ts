@@ -1,5 +1,4 @@
 import * as mongoose from 'mongoose';
-import { AuthorSchema } from 'src/documents/authors.document';
 
 export interface UserDocument extends mongoose.Document {
     id?: string;
@@ -15,6 +14,7 @@ export const UserSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   username: String,
+  password: String,
   passwordHash: String,
   passwordSalt: String,
   userRole: String,

@@ -20,8 +20,6 @@ export class UserService {
       userModel.firstName = user.firstName;
       userModel.lastName = user.lastName;
       userModel.username = user.username;
-      userModel.passwordHash = user.passwordHash;
-      userModel.passwordSalt = user.passwordSalt;
       userModel.userRole = user.userRole;
       usersModel.push(userModel);
     }
@@ -34,9 +32,9 @@ export class UserService {
     createUserDocument.firstName = userModel.firstName;
     createUserDocument.lastName = userModel.lastName;
     createUserDocument.username = userModel.username;
-    // createUserDocument.passwordSalt = await this.passwordHelper.getSalt();
-    createUserDocument.passwordHash = await this.passwordHelper.getHashing(userModel.passwordHash, createUserDocument.passwordSalt);
-    // createUserDocument.userRole = userModel.userRole;
+    createUserDocument.passwordSalt = await this.passwordHelper.getSalt();
+    createUserDocument.passwordHash = await this.passwordHelper.getHashing(userModel.password, createUserDocument.passwordSalt);
+    createUserDocument.userRole = userModel.userRole;
 
     const createdUserDocument = await this.userRepo.addUser(createUserDocument);
     const createdUserModel: UserModel = {};
@@ -44,8 +42,6 @@ export class UserService {
     createdUserModel.firstName = createdUserDocument.firstName;
     createdUserModel.lastName = createdUserDocument.lastName;
     createdUserModel.username = createdUserDocument.username;
-    createdUserModel.passwordSalt = createdUserDocument.passwordSalt;
-    createdUserModel.passwordHash = createdUserDocument.passwordHash;
     createdUserModel.userRole = createdUserDocument.userRole;
 
     return createdUserModel;

@@ -3,6 +3,7 @@ export interface UserModel {
     firstName?: string;
     lastName?: string;
     username?: string;
+    password?: string;
     passwordHash?: string;
     passwordSalt?: string;
     userRole?: string;

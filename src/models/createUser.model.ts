@@ -2,7 +2,7 @@ export class CreateUserModel {
   firstName: string;
   lastName: string;
   username: string;
+  passwordSalt: string;
   passwordHash: string;
-  salt: string;
   userRole: string;
 }

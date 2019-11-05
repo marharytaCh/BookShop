@@ -11,9 +11,15 @@ export class Hash {
     return salt;
   }
 
-  public async getHashing(password: string, salt: string) {
-    const hashedPassword = await bcrypt.hash(password, salt);
+  public async getHashing(password: string, salt: string): Promise<string> {
+    const hashedPassword: string = await bcrypt.hash(password, salt);
 
     return hashedPassword;
+  }
+
+  public async comparePassword(password: string, hash: string): Promise<boolean> {
+    const comparedPassword: boolean = await bcrypt.compare(password, hash);
+
+    return comparedPassword;
   }
 }
