@@ -6,6 +6,7 @@ import { AllExceptionFilter } from 'src/common/exception.filter';
 import { RolesGuard } from 'src/common/roles/roles.guard';
 import { Roles } from 'src/common/roles/roles.decorator';
 import { Token } from 'src/models/token.model';
+import { LoginUserModel } from 'src/models/login.model';
 
 @ApiBearerAuth()
 @ApiUseTags('Authentification')
@@ -14,22 +15,26 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @UseFilters(new AllExceptionFilter())
-  @UseGuards(AuthGuard('local'))
   @Post('login')
-  public async login(@Body() req) {
-    const accessToken = this.authService.getToken(req);
-    const refreshToken = this.authService.getRefresh(req);
-    const myToken: Token = {
-      accessToken,
-      refreshToken,
-    };
-    return  myToken;
+  public async login(@Body() loginModel: LoginUserModel) {
+    loginModel.token = await this.authService.getToken(loginModel);
+
+    return loginModel;
+    // const accessToken = this.authService.getToken(loginModel);
+    // const refreshToken = this.authService.getRefresh(loginModel);
+    // const myToken: Token = {
+    //   accessToken,
+    //   refreshToken,
+    // };
+    // return  myToken;
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('person')
-  getProfile(@Request() req) {
-    console.log(req);
-    return req.body;
-  }
+  // @UseGuards(AuthGuard('jwt'))
+  // @ApiBearerAuth()
+  // @Get('person')
+  // pudlic async getProfile(@Request() req) {
+  //   const user: LoginUserModel = await this.authService.userPayload(req);
+
+  //   return user;
+  // }
 }

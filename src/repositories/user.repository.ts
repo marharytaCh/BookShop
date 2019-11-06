@@ -46,4 +46,11 @@ export class UserRepo {
 
     return deletedUser;
   }
+
+  public async findByUsername(username: string) {
+    const element = {username};
+    const user = await this.userModel.findOne(element).exec();
+
+    return user;
+  }
 }

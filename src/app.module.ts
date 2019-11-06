@@ -28,7 +28,7 @@ const env: Environment = environment();
         ),
       ],
   controllers: [AppController, BooksController, UserController, AuthController, AuthorController],
-  providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy, 
+  providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy,
     BookRepo, AuthorRepo, UserRepo, Hash,
     {
       provide: APP_GUARD,

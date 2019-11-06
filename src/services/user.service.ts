@@ -12,7 +12,7 @@ export class UserService {
               @Inject(forwardRef(() => Hash))
               private readonly passwordHelper: Hash) {}
 
-  public async getAll() {
+  public async getAll(): Promise<UserModel[]> {
     const usersModel: UserModel[] = new Array<UserModel>();
     const users: UserDocument[] = await this.userRepo.getAll();
     for (const user of users) {
@@ -28,7 +28,7 @@ export class UserService {
     return usersModel;
   }
 
-  public async getById(userId: UserDocument) {
+  public async getById(userId: UserDocument): Promise<UserModel> {
     const userModel: UserModel = {};
     const userDocument = await this.userRepo.getById(userId);
     userModel.id = userDocument.id;
@@ -37,11 +37,11 @@ export class UserService {
     userModel.username = userDocument.username;
     userModel.userRole = userDocument.userRole;
     userModel.password = userDocument.password;
-    console.log(userDocument.password)
+
     return userModel;
   }
 
-  public async getPagination(offset: number, limit: number) {
+  public async getPagination(offset: number, limit: number): Promise<UserModel[]> {
     const usersModel: UserModel[] = new Array<UserModel>();
     const userDocument: UserDocument[] = await this.userRepo.getPagination(offset, limit);
     for (const user of userDocument) {
@@ -77,7 +77,7 @@ export class UserService {
     return createdUserModel;
   }
 
-  public async update(updateUserModel: UpdateUserModel) {
+  public async update(updateUserModel: UpdateUserModel): Promise<UserModel> {
     const updateUserDocument: UserDocument = {};
     updateUserDocument.id = updateUserModel.id;
     updateUserDocument.firstName = updateUserModel.firstName;
@@ -97,12 +97,26 @@ export class UserService {
     return updateUser;
   }
 
-  public async delete(userId: string) {
+  public async delete(userId: string): Promise<UserModel> {
     const deletedUser: UserModel = {};
     const deletedUserDocument = await this.userRepo.delete(userId);
     deletedUser.id = deletedUserDocument.id;
     deletedUser.firstName = deletedUserDocument.firstName;
+    deletedUser.lastName = deletedUserDocument.lastName;
 
     return deletedUser;
+  }
+
+  public async findByUsername(username: string): Promise<UserModel> {
+    const user: UserModel = {};
+    const userDocument = await this.userRepo.findByUsername(username);
+    user.id = userDocument.id;
+    user.firstName = userDocument.firstName;
+    user.lastName = userDocument.lastName;
+    user.username = userDocument.username;
+    user.passwordSalt = userDocument.passwordSalt;
+    user.passwordHash = userDocument.passwordHash;
+
+    return user;
   }
 }
