@@ -6,7 +6,7 @@ import { environment } from 'src/environment';
 import jwt = require('jsonwebtoken');
 import { Hash } from 'src/common';
 import { LoginUserModel } from 'src/models/login.model';
-import { UserPayloadModel } from 'src/controllers/userPayload.model';
+import { UserPayloadModel } from 'src/models/userPayload.model';
 
 const env = environment();
 
@@ -19,7 +19,6 @@ export class AuthService {
     private readonly passwordHelper: Hash) {}
 
   public async validateUser(username: string, password: string): Promise<UserModel> {
-    console.log('validate srvc');
     const user = await this.usersService.findByUsername(username);
     const passwordHash: boolean = await this.passwordHelper.comparePassword(password, user.passwordHash);
 
@@ -33,26 +32,25 @@ export class AuthService {
       userModel.id = user.id;
       userModel.firstName = user.firstName;
       userModel.lastName = user.lastName;
-      console.log(userModel);
       return userModel;
     }
 
     return null;
   }
 
-  public getToken(loginModel: LoginUserModel) {
+  public getToken(loginModel: LoginUserModel): string {
     const accessToken: string = jwt.sign(loginModel, env.tokenSecret, { expiresIn: env.tokenLife});
 
     return accessToken;
   }
 
-  public  getRefresh(payload: UserModel) {
+  public  getRefresh(payload: UserModel): string {
     const user = {
       role: payload.userRole,
       userId: payload.id,
       username: payload.username,
     };
-    const refreshToken: string = jwt.sign(user, env.tokenSecret, { expiresIn: env.refreshTokenLife});
+    const refreshToken: string = jwt.sign(user, env.tokenSecret, { expiresIn: env.tokenExpireIn});
 
     return refreshToken;
   }

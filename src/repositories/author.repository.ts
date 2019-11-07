@@ -9,7 +9,7 @@ export class AuthorRepo {
   private readonly authorModel: Model<Author> = mongoose.model('Author', AuthorSchema);
 
   public async getAll(): Promise<Author[]> {
-    const authors = await this.authorModel.find().exec();
+    const authors: Author[] = await this.authorModel.find().exec();
 
     return authors;
   }

@@ -7,8 +7,7 @@ export const prod: Environment = {
   conection: 'http',
   mode: 'production',
   tokenSecret: fs.readFileSync('src/secrets/jwtKey.key'),
-  tokenLife: 1800,
-  refreshTokenLife: 68000,
-  connectionWithMongo: 'mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority',
+  tokenLife: 60 * 60,
   tokenExpireIn: 60 * 60 * 24,
+  connectionWithMongo: 'mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority',
 };

@@ -3,7 +3,6 @@ export interface Environment {
   mode?: string;
   tokenSecret?: string;
   tokenLife?: number;
-  refreshTokenLife?: number;
-  connectionWithMongo?: string;
   tokenExpireIn?: number;
+  connectionWithMongo?: string;
 }

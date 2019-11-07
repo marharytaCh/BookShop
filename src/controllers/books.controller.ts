@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Param, Body, Res, HttpStatus, NotFoundException, Put, Query, Delete} from '@nestjs/common';
-import { BooksService } from 'src/services/books.service';
-import { CreateBook } from '../models/createBook.model';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { BookModel, UpdateBookModel } from 'src/models';
+
+import { BooksService } from 'src/services';
+import { BookModel, UpdateBookModel, CreateBook } from 'src/models';
 import { Book } from 'src/documents';
 
 @ApiUseTags('books')

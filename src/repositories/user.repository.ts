@@ -10,8 +10,8 @@ export class UserRepo {
   constructor() {}
   private readonly userModel: Model<UserDocument> = mongoose.model('User', UserSchema);
 
-  public async getAll() {
-    const books = await this.userModel.find().exec();
+  public async getAll(): Promise<UserDocument[]> {
+    const books: UserDocument[] = await this.userModel.find().exec();
 
     return books;
   }
@@ -28,28 +28,28 @@ export class UserRepo {
     return users;
   }
 
-  public async addUser(createUserDocument: UserDocument) {
+  public async addUser(createUserDocument: UserDocument): Promise<UserDocument> {
     const userDocument: Model<UserDocument> = new this.userModel(createUserDocument);
     const newUser: UserDocument = await userDocument.save();
 
     return newUser;
   }
 
-  public async update(updateUserDocument: UserDocument) {
+  public async update(updateUserDocument: UserDocument): Promise<UserDocument> {
     const updatedUser: UserDocument = await this.userModel.findByIdAndUpdate(updateUserDocument.id, updateUserDocument);
 
     return updatedUser;
   }
 
-  public async delete(userId: string) {
+  public async delete(userId: string): Promise<UserDocument> {
     const deletedUser: UserDocument = await this.userModel.findByIdAndRemove(userId);
 
     return deletedUser;
   }
 
-  public async findByUsername(username: string) {
+  public async findByUsername(username: string): Promise<UserDocument> {
     const element = {username};
-    const user = await this.userModel.findOne(element).exec();
+    const user: UserDocument = await this.userModel.findOne(element).exec();
 
     return user;
   }

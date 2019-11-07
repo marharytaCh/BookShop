@@ -19,15 +19,15 @@ export class UserController {
   }
 
   @Get(':id')
-  public async getbyId(@Param('id') id: UserDocument) {
+  public async getbyId(@Param('id') id: UserDocument): Promise<UserModel> {
     const user: UserModel = await this.userService.getById(id);
 
     return user;
   }
 
   @Get(':offset/:limit')
-  public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string) {
-    const users = await this.userService.getPagination(+offset, +limit);
+  public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<UserModel[]> {
+    const users: UserModel[] = await this.userService.getPagination(+offset, +limit);
 
     return users;
   }
@@ -40,14 +40,14 @@ export class UserController {
   }
 
   @Put()
-  async update(@Body() updateUserModel: UpdateUserModel) {
-    const updatedUser = await this.userService.update(updateUserModel);
+  async update(@Body() updateUserModel: UpdateUserModel): Promise<UserModel> {
+    const updatedUser: UserModel = await this.userService.update(updateUserModel);
 
     return updatedUser;
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id') id: string): Promise<UserModel> {
     const deletedUser: UserModel = await this.userService.delete(id);
 
     return deletedUser;

@@ -5,7 +5,7 @@ import { AuthService } from 'src/services/index';
 import { AllExceptionFilter } from 'src/common/exception.filter';
 import { Token } from 'src/models/token.model';
 import { LoginUserModel } from 'src/models/login.model';
-import { UserPayloadModel } from './userPayload.model';
+import { UserPayloadModel } from '../models/userPayload.model';
 
 @ApiBearerAuth()
 @ApiUseTags('Authentification')
@@ -18,9 +18,6 @@ export class AuthController {
   @Post('login')
   public async login(@Request() req) {
 
-    // loginModel.token = await this.authService.getToken(loginModel);
-
-    // return loginModel;
     const accessToken: string = this.authService.getToken(req.user);
     const refreshToken: string = this.authService.getRefresh(req.user);
     const myTokens: Token = {

@@ -19,7 +19,7 @@ import { AuthorRepo, BookRepo, UserRepo } from 'src/repositories';
 
 const env: Environment = environment();
 @Module({
-  imports:[// AuthModule,
+  imports:[
             PassportModule.register({defaultStrategy: 'jwt'}),
           JwtModule.register({
             secret: env.tokenSecret,
