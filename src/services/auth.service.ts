@@ -47,7 +47,7 @@ export class AuthService {
   public  getRefresh(payload: UserModel): string {
     const user = {
       role: payload.userRole,
-      userId: payload.id,
+      id: payload.id,
       username: payload.username,
     };
     const refreshToken: string = jwt.sign(user, env.tokenSecret, { expiresIn: env.tokenExpireIn});
