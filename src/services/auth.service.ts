@@ -6,6 +6,7 @@ import { environment } from 'src/environment';
 import jwt = require('jsonwebtoken');
 import { Hash } from 'src/common';
 import { LoginUserModel } from 'src/models/login.model';
+import { UserPayloadModel } from 'src/controllers/userPayload.model';
 
 const env = environment();
 
@@ -17,11 +18,26 @@ export class AuthService {
     @Inject(forwardRef(() => Hash))
     private readonly passwordHelper: Hash) {}
 
-    public async validateUser(username: string, password: string): Promise<any> {
+  public async validateUser(username: string, password: string): Promise<UserModel> {
+    console.log('validate srvc');
     const user = await this.usersService.findByUsername(username);
-    const passwordHash: string = await this.passwordHelper.getHashing(password, user.passwordSalt);
+    const passwordHash: boolean = await this.passwordHelper.comparePassword(password, user.passwordHash);
 
-    return user.passwordHash === passwordHash;
+    if (!passwordHash ) {
+      
+      return null;
+    }
+
+    if (passwordHash) {
+      const userModel: UserModel = {};
+      userModel.id = user.id;
+      userModel.firstName = user.firstName;
+      userModel.lastName = user.lastName;
+
+      return userModel;
+    }
+
+    return null;
   }
 
   public getToken(loginModel: LoginUserModel) {
@@ -40,6 +56,5 @@ export class AuthService {
 
     return refreshToken;
   }
-
 
 }

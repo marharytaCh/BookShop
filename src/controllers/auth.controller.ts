@@ -3,10 +3,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthService } from 'src/services/index';
 import { AllExceptionFilter } from 'src/common/exception.filter';
-import { RolesGuard } from 'src/common/roles/roles.guard';
-import { Roles } from 'src/common/roles/roles.decorator';
 import { Token } from 'src/models/token.model';
 import { LoginUserModel } from 'src/models/login.model';
+import { UserPayloadModel } from './userPayload.model';
 
 @ApiBearerAuth()
 @ApiUseTags('Authentification')
@@ -14,27 +13,27 @@ import { LoginUserModel } from 'src/models/login.model';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
+  @UseGuards(AuthGuard('local'))
   @UseFilters(new AllExceptionFilter())
   @Post('login')
   public async login(@Body() loginModel: LoginUserModel) {
-    loginModel.token = await this.authService.getToken(loginModel);
+    console.log('contr')
+    // loginModel.token = await this.authService.getToken(loginModel);
 
-    return loginModel;
-    // const accessToken = this.authService.getToken(loginModel);
-    // const refreshToken = this.authService.getRefresh(loginModel);
-    // const myToken: Token = {
-    //   accessToken,
-    //   refreshToken,
-    // };
-    // return  myToken;
+    // return loginModel;
+    const accessToken: string = this.authService.getToken(loginModel);
+    const refreshToken: string = this.authService.getRefresh(loginModel);
+    const myTokens: Token = {
+      accessToken,
+      refreshToken,
+    };
+    return  myTokens;
   }
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @ApiBearerAuth()
-  // @Get('person')
-  // pudlic async getProfile(@Request() req) {
-  //   const user: LoginUserModel = await this.authService.userPayload(req);
-
-  //   return user;
-  // }
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @Get('person')
+  public async getProfile(@Request() req) {
+    console.log(req)
+  }
 }
