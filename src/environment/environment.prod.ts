@@ -10,4 +10,5 @@ export const prod: Environment = {
   tokenLife: 1800,
   refreshTokenLife: 68000,
   connectionWithMongo: 'mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority',
+  tokenExpireIn: 60 * 60 * 24,
 };

@@ -16,17 +16,18 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @UseFilters(new AllExceptionFilter())
   @Post('login')
-  public async login(@Body() loginModel: LoginUserModel) {
-    console.log('contr')
+  public async login(@Request() req) {
+
     // loginModel.token = await this.authService.getToken(loginModel);
 
     // return loginModel;
-    const accessToken: string = this.authService.getToken(loginModel);
-    const refreshToken: string = this.authService.getRefresh(loginModel);
+    const accessToken: string = this.authService.getToken(req.user);
+    const refreshToken: string = this.authService.getRefresh(req.user);
     const myTokens: Token = {
       accessToken,
       refreshToken,
     };
+
     return  myTokens;
   }
 
@@ -34,6 +35,7 @@ export class AuthController {
   @ApiBearerAuth()
   @Get('person')
   public async getProfile(@Request() req) {
-    console.log(req)
+
+    return req.body;
   }
 }

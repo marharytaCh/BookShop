@@ -5,4 +5,5 @@ export interface Environment {
   tokenLife?: number;
   refreshTokenLife?: number;
   connectionWithMongo?: string;
+  tokenExpireIn?: number;
 }

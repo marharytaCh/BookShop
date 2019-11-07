@@ -23,7 +23,7 @@ const env: Environment = environment();
             PassportModule.register({defaultStrategy: 'jwt'}),
           JwtModule.register({
             secret: env.tokenSecret,
-            signOptions: { expiresIn: '60s' },
+            signOptions: { expiresIn: environment().tokenExpireIn},
           },
         ),
       ],

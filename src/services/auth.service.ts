@@ -24,7 +24,7 @@ export class AuthService {
     const passwordHash: boolean = await this.passwordHelper.comparePassword(password, user.passwordHash);
 
     if (!passwordHash ) {
-      
+
       return null;
     }
 
@@ -33,7 +33,7 @@ export class AuthService {
       userModel.id = user.id;
       userModel.firstName = user.firstName;
       userModel.lastName = user.lastName;
-
+      console.log(userModel);
       return userModel;
     }
 
