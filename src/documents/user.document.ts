@@ -22,5 +22,5 @@ export const UserSchema = new mongoose.Schema({
   passwordSalt: String,
   userRole: String,
   confirmEmail: Boolean,
-  validCode: {type: String, default: false},
+  validCode: String,
 });

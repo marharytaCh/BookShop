@@ -32,9 +32,12 @@ export class UserController {
     return users;
   }
 
-  @Get(':mail/:token')
-  public async verificateEmail(@Param('mail') mail: string, @Param('token') token: string) {
-  console.log('hello')
+  @Get('/confirm/:email/:token')
+  public async verificateEmail(@Param('email') email: string, @Param('token') token: string) {
+    const user = await this.userService.findByUsername(email);
+    const validate = await this.userService.isUserValid(token, user);
+
+    return validate;
   }
 
   @Post()

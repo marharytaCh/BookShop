@@ -41,13 +41,13 @@ export class Hash {
           pass: env.passwordMail,
         },
       });
-      const token: string = await this.getSalt();
+      const token: number = await Math.random();
 
       const mailOptions: MailOptionModel = {
         from: env.userMail,
         to: username,
         subject: 'BookShop. Verificate your email!',
-        html: `<a href="${url}/users/${username}/${token}" style = "background-color: red;
+        html: `<a href="${url}/users/confirm/${username}/${token}" style = "background-color: red;
                                     color: white;
                                     padding: 1em 1.5em;
                                     text-decoration: none;
@@ -55,7 +55,8 @@ export class Hash {
         Verificate</a>`,
       };
       await transportModel.sendMail(mailOptions);
-      return token;
+      const result = token.toString()
+      return result ;
     } catch (error) {
       const messegeError: string = error;
 

@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 
-import { UserModel, UpdateUserModel, InfoModel, CreateUserModel } from 'src/models';
+import { UserModel, UpdateUserModel, UserInfoModel, CreateUserModel} from 'src/models';
 import { UserRepo } from 'src/repositories';
 import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
@@ -68,7 +68,8 @@ export class UserService {
     createUserDocument.passwordHash = await this.passwordHelper.getHashing(createUserModel.password, createUserDocument.passwordSalt);
     createUserDocument.userRole = createUserModel.userRole;
     createUserDocument.validCode = await this.passwordHelper.sendEmail(createUserModel.username, url);
-    console.log(createUserDocument.validCode)
+    createUserDocument.confirmEmail = false;
+
     const validEmail = await this.userRepo.validUser(createUserDocument.username);
     const userRegistered = await this.userRepo.findByUsername(createUserDocument.username);
 
@@ -83,7 +84,7 @@ export class UserService {
 
       return createdUserModel;
     }
-    const error: InfoModel = new InfoModel();
+    const error: UserInfoModel = new UserInfoModel();
     if (userRegistered) {
       error.message = 'user already exist';
       console.log(error.message);
@@ -131,9 +132,25 @@ export class UserService {
     user.firstName = userDocument.firstName;
     user.lastName = userDocument.lastName;
     user.username = userDocument.username;
-    user.passwordSalt = userDocument.passwordSalt;
-    user.passwordHash = userDocument.passwordHash;
+    user.validCode = userDocument.validCode;
+    user.confirmEmail = userDocument.confirmEmail;
 
     return user;
+  }
+
+  public async isUserValid(token: string, user: UserModel) {
+    if (user.validCode === token) {
+      user.confirmEmail = true;
+    }
+    user.validCode = '0';
+    const userDocument: UserDocument = await this.userRepo.addUser(user)
+    const info = new UserInfoModel();
+    if (userDocument) {
+      info.message = 'Confirmed';
+      return info;
+    }
+    info.message = 'Сonfirmation error';
+
+    return info;
   }
 }
