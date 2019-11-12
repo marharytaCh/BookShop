@@ -7,3 +7,4 @@ export * from 'src/models/updateAuthor.model';
 export * from 'src/models/user.model';
 export * from 'src/models/createUser.model';
 export * from 'src/models/updateUser.model';
+export * from 'src/models/info.model';

@@ -7,4 +7,6 @@ export interface UserModel {
     passwordHash?: string;
     passwordSalt?: string;
     userRole?: string;
+    confirmEmail?: boolean;
+    validCode?: string;
   }

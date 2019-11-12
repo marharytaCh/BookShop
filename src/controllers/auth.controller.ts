@@ -32,7 +32,6 @@ export class AuthController {
   @ApiBearerAuth()
   @Get('person')
   public async getProfile(@Request() req) {
-
-    return req.body;
+    console.log(req);
   }
 }

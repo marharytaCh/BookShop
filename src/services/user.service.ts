@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 
-import { UserModel, UpdateUserModel } from 'src/models';
+import { UserModel, UpdateUserModel, InfoModel, CreateUserModel } from 'src/models';
 import { UserRepo } from 'src/repositories';
 import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
@@ -57,24 +57,41 @@ export class UserService {
     return usersModel;
   }
 
-  public async addUser(userModel: UserModel): Promise<UserModel> {
+  public async addUser(createUserModel: CreateUserModel, req): Promise<UserModel> {
+    const url: string = req.protocol + '://' + req.hostname;
+    const userModel: UserModel = {};
     const createUserDocument: UserDocument = {};
-    createUserDocument.firstName = userModel.firstName;
-    createUserDocument.lastName = userModel.lastName;
-    createUserDocument.username = userModel.username;
+    createUserDocument.firstName = createUserModel.firstName;
+    createUserDocument.lastName = createUserModel.lastName;
+    createUserDocument.username = createUserModel.username;
     createUserDocument.passwordSalt = await this.passwordHelper.getSalt();
-    createUserDocument.passwordHash = await this.passwordHelper.getHashing(userModel.password, createUserDocument.passwordSalt);
-    createUserDocument.userRole = userModel.userRole;
+    createUserDocument.passwordHash = await this.passwordHelper.getHashing(createUserModel.password, createUserDocument.passwordSalt);
+    createUserDocument.userRole = createUserModel.userRole;
+    createUserDocument.validCode = await this.passwordHelper.sendEmail(createUserModel.username, url);
+    console.log(createUserDocument.validCode)
+    const validEmail = await this.userRepo.validUser(createUserDocument.username);
+    const userRegistered = await this.userRepo.findByUsername(createUserDocument.username);
 
-    const createdUserDocument = await this.userRepo.addUser(createUserDocument);
-    const createdUserModel: UserModel = {};
-    createdUserModel.id = createdUserDocument.id;
-    createdUserModel.firstName = createdUserDocument.firstName;
-    createdUserModel.lastName = createdUserDocument.lastName;
-    createdUserModel.username = createdUserDocument.username;
-    createdUserModel.userRole = createdUserDocument.userRole;
+    if (!userRegistered && validEmail) {
+      const createdUserDocument = await this.userRepo.addUser(createUserDocument);
+      const createdUserModel: UserModel = {};
+      createdUserModel.id = createdUserDocument.id;
+      createdUserModel.firstName = createdUserDocument.firstName;
+      createdUserModel.lastName = createdUserDocument.lastName;
+      createdUserModel.username = createdUserDocument.username;
+      createdUserModel.userRole = createdUserDocument.userRole;
 
-    return createdUserModel;
+      return createdUserModel;
+    }
+    const error: InfoModel = new InfoModel();
+    if (userRegistered) {
+      error.message = 'user already exist';
+      console.log(error.message);
+    }
+    if (!validEmail) {
+      error.message = 'your email is wrong';
+      console.log(error.message);
+    }
   }
 
   public async update(updateUserModel: UpdateUserModel): Promise<UserModel> {

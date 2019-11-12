@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, Request } from '@nestjs/common';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from 'src/services';
 import { UserModel, CreateUserModel, UpdateUserModel } from 'src/models';
@@ -32,9 +32,14 @@ export class UserController {
     return users;
   }
 
+  @Get(':mail/:token')
+  public async verificateEmail(@Param('mail') mail: string, @Param('token') token: string) {
+  console.log('hello')
+  }
+
   @Post()
-  public async addUser(@Body() userModel: CreateUserModel): Promise<UserModel> {
-    const user: UserDocument = await this.userService.addUser(userModel);
+  public async addUser(@Request() req, @Body() userModel: CreateUserModel): Promise<UserModel> {
+    const user: UserDocument = await this.userService.addUser(userModel, req);
 
     return user;
   }
