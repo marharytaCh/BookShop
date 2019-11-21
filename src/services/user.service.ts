@@ -5,6 +5,7 @@ import { UserRepo } from 'src/repositories';
 import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
 import * as bcrypt from 'bcrypt';
+import { ResetPassword } from 'src/models/resetPassword.model';
 
 @Injectable()
 export class UserService {
@@ -95,6 +96,17 @@ export class UserService {
     }
   }
 
+  public async resetPassword(resetPassword: ResetPassword, req) {
+    const user = await this.userRepo.findByUsername(resetPassword.username);
+    if (user) {
+      const validCode = await this.passwordHelper.resetPassword(user.username)
+      user.passwordSalt = await this.passwordHelper.getSalt();
+      user.passwordHash = await this.passwordHelper.getHashing(validCode, user.passwordSalt);
+      const updatedUser = await this.userRepo.update(user);
+      return updatedUser;
+    }
+  }
+
   public async update(updateUserModel: UpdateUserModel): Promise<UserModel> {
     const updateUserDocument: UserDocument = {};
     updateUserDocument.id = updateUserModel.id;
@@ -132,6 +144,8 @@ export class UserService {
     user.firstName = userDocument.firstName;
     user.lastName = userDocument.lastName;
     user.username = userDocument.username;
+    user.passwordSalt = userDocument.passwordSalt;
+    user.passwordHash = userDocument.passwordHash;
     user.validCode = userDocument.validCode;
     user.confirmEmail = userDocument.confirmEmail;
 
@@ -142,8 +156,8 @@ export class UserService {
     if (user.validCode === token) {
       user.confirmEmail = true;
     }
-    user.validCode = '0';
-    const userDocument: UserDocument = await this.userRepo.addUser(user)
+    user.validCode = '';
+    const userDocument: UserDocument = await this.userRepo.update(user)
     const info = new UserInfoModel();
     if (userDocument) {
       info.message = 'Confirmed';

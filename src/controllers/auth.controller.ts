@@ -17,7 +17,7 @@ export class AuthController {
   @UseFilters(new AllExceptionFilter())
   @Post('login')
   public async login(@Request() req) {
-
+    console.log(req)
     const accessToken: string = this.authService.getToken(req.user);
     const refreshToken: string = this.authService.getRefresh(req.user);
     const myTokens: Token = {

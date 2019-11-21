@@ -4,6 +4,7 @@ import { UserService } from 'src/services';
 import { UserModel, CreateUserModel, UpdateUserModel } from 'src/models';
 import { UserDocument } from 'src/documents';
 import { is } from '@babel/types';
+import { ResetPassword } from 'src/models/resetPassword.model';
 
 @ApiUseTags('Users table')
 @Controller('users')
@@ -45,6 +46,12 @@ export class UserController {
     const user: UserDocument = await this.userService.addUser(userModel, req);
 
     return user;
+  }
+
+  @Post('/reset')
+  public async resetPassword(@Request() req, @Body() resetPassword: ResetPassword) {
+    const user = await this.userService.resetPassword(resetPassword, req);
+    console.log(user);
   }
 
   @Put()
