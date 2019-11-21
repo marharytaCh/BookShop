@@ -64,7 +64,7 @@ export class Hash {
     }
   }
 
-  public async resetPassword(username: string) {
+  public async forgotPassword(username: string) {
     try {
       const transportModel: CreateTransportModel = nodemailer.createTransport({
         service: env.serviceMail,

@@ -5,7 +5,7 @@ import { UserRepo } from 'src/repositories';
 import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
 import * as bcrypt from 'bcrypt';
-import { ResetPassword } from 'src/models/resetPassword.model';
+import { ForgotPassword } from 'src/models/resetPassword.model';
 
 @Injectable()
 export class UserService {
@@ -96,13 +96,17 @@ export class UserService {
     }
   }
 
-  public async resetPassword(resetPassword: ResetPassword, req) {
-    const user = await this.userRepo.findByUsername(resetPassword.username);
+  public async forgotPassword(forgotPassword: ForgotPassword) {
+    const user = await this.userRepo.findByUsername(forgotPassword.username);
     if (user) {
-      const validCode = await this.passwordHelper.resetPassword(user.username)
+      const validCode = await this.passwordHelper.forgotPassword(user.username);
       user.passwordSalt = await this.passwordHelper.getSalt();
       user.passwordHash = await this.passwordHelper.getHashing(validCode, user.passwordSalt);
       const updatedUser = await this.userRepo.update(user);
+      const userModel: UserModel = {};
+      userModel.firstName = user.firstName;
+      userModel.username = user.username;
+      userModel.
       return updatedUser;
     }
   }
