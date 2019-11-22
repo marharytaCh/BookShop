@@ -20,4 +20,5 @@ export const BookSchema = new mongoose.Schema({
     currency: String,
     type: String,
     author: String, // [{type: mongoose.Schema.Types.ObjectId, ref: 'Author'}],
+    img: { data: Buffer, contentType: String },
 });
