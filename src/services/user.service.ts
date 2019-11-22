@@ -5,7 +5,8 @@ import { UserRepo } from 'src/repositories';
 import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
 import * as bcrypt from 'bcrypt';
-import { ForgotPassword } from 'src/models/resetPassword.model';
+import { ForgotPassword } from 'src/models/forgotPassword.model';
+import { ChangePassword } from 'src/models/changePassword.model';
 
 @Injectable()
 export class UserService {
@@ -96,18 +97,19 @@ export class UserService {
     }
   }
 
-  public async forgotPassword(forgotPassword: ForgotPassword) {
+  public async resetPassword(forgotPassword: ForgotPassword) {
     const user = await this.userRepo.findByUsername(forgotPassword.username);
     if (user) {
-      const validCode = await this.passwordHelper.forgotPassword(user.username);
+      const validCode = await this.passwordHelper.resetPassword(user.username);
       user.passwordSalt = await this.passwordHelper.getSalt();
       user.passwordHash = await this.passwordHelper.getHashing(validCode, user.passwordSalt);
       const updatedUser = await this.userRepo.update(user);
       const userModel: UserModel = {};
       userModel.firstName = user.firstName;
+      userModel.lastName = user.lastName;
       userModel.username = user.username;
-      userModel.
-      return updatedUser;
+      userModel.confirmEmail = user.confirmEmail;
+      return userModel;
     }
   }
 
@@ -129,6 +131,34 @@ export class UserService {
     updateUser.userRole = updatedUserDocument.userRole;
 
     return updateUser;
+  }
+
+  public async changePassword(changePassword: ChangePassword) {
+    const user = await this.userRepo.findByUsername(changePassword.username);
+    const compearedPassword = await this.passwordHelper.comparePassword(changePassword.oldPassword, user.passwordHash)
+    const info = new UserInfoModel();
+    if (!user) {
+      info.message = 'User with this usernmae does not exist';
+      return info;
+    }
+    if (compearedPassword && (changePassword.newPassword === changePassword.repeatNewPassword)) {
+      user.passwordSalt = await this.passwordHelper.getSalt();
+      user.passwordHash = await this.passwordHelper.getHashing(changePassword.newPassword, user.passwordSalt);
+
+      const userWithNewPassword = await this.userRepo.update(user);
+      userWithNewPassword.passwordSalt = user.passwordSalt;
+      userWithNewPassword.passwordHash = user.passwordHash;
+      return userWithNewPassword;
+    }
+
+    if (!compearedPassword) {
+      info.message = 'Your old password is inncorect';
+      return info;
+    }
+    if (changePassword.newPassword !== changePassword.repeatNewPassword) {
+      info.message = 'Make sure that you entered correct new password';
+      return info;
+    }
   }
 
   public async delete(userId: string): Promise<UserModel> {
@@ -161,7 +191,7 @@ export class UserService {
       user.confirmEmail = true;
     }
     user.validCode = '';
-    const userDocument: UserDocument = await this.userRepo.update(user)
+    const userDocument: UserDocument = await this.userRepo.update(user);
     const info = new UserInfoModel();
     if (userDocument) {
       info.message = 'Confirmed';

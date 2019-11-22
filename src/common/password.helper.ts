@@ -64,7 +64,7 @@ export class Hash {
     }
   }
 
-  public async forgotPassword(username: string) {
+  public async resetPassword(username: string) {
     try {
       const transportModel: CreateTransportModel = nodemailer.createTransport({
         service: env.serviceMail,
@@ -75,7 +75,7 @@ export class Hash {
           pass: env.passwordMail,
         },
       });
-      const token: string = await Math.random().toString(36).slice(2, 2 + Math.max(1, Math.min(10))) ;
+      const token: string = Math.random().toString(36).slice(2, 2 + Math.max(1, Math.min(10))) ;
 
       const mailOptions: MailOptionModel = {
         from: env.userMail,

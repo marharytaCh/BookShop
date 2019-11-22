@@ -4,7 +4,8 @@ import { UserService } from 'src/services';
 import { UserModel, CreateUserModel, UpdateUserModel } from 'src/models';
 import { UserDocument } from 'src/documents';
 import { is } from '@babel/types';
-import { ForgotPassword } from 'src/models/resetPassword.model';
+import { ResetPassword } from 'src/models/forgotPassword.model';
+import { ChangePassword } from 'src/models/changePassword.model';
 
 @ApiUseTags('Users table')
 @Controller('users')
@@ -49,8 +50,9 @@ export class UserController {
   }
 
   @Post('/resetPassword')
-  public async resetPassword(@Body() forgotPassword: ForgotPassword) {
-    const user = await this.userService.forgotPassword(forgotPassword);
+  public async resetPassword(@Body() resetPassword: ResetPassword) {
+    const user = await this.userService.resetPassword(resetPassword);
+
     return user;
   }
 
@@ -58,6 +60,13 @@ export class UserController {
   async update(@Body() updateUserModel: UpdateUserModel): Promise<UserModel> {
     const updatedUser: UserModel = await this.userService.update(updateUserModel);
 
+    return updatedUser;
+  }
+
+  @Post('/changePassword')
+  public async changePassword(@Body() changePassword: ChangePassword) {
+    const updatedUser = await this.userService.changePassword(changePassword);
+    
     return updatedUser;
   }
 

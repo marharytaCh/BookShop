@@ -23,7 +23,6 @@ export class AuthService {
     const passwordHash: boolean = await this.passwordHelper.comparePassword(password, user.passwordHash);
 
     if (!passwordHash ) {
-
       return null;
     }
 

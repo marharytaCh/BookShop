@@ -9,7 +9,7 @@ export const dev: Environment = {
   tokenSecret: fs.readFileSync('src/secrets/jwtKey.key'),
   tokenLife: 60 * 60,
   tokenExpireIn: 60 * 60 * 24,
-  connectionWithMongo: 'mongodb+srv://margo:fDZXnidOTVnSOSAx@cluster0-c1mwm.mongodb.net/printing-ed?retryWrites=true&w=majority',
+  connectionWithMongo: 'mongodb+srv://chernysh:SYdEsXxKXaRFd7kS@dbversion01-j2fbg.mongodb.net/shop?retryWrites=true&w=majority',
   serviceMail: 'gmail',
   userMail: 'margomimi82@gmail.com',
   passwordMail: 'Margo1304.',
