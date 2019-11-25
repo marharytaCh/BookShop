@@ -6,24 +6,22 @@ import { environment } from 'src/environment';
 import jwt = require('jsonwebtoken');
 import { Hash } from 'src/common';
 import { LoginUserModel } from 'src/models/login.model';
-import { UserPayloadModel } from 'src/models/userPayload.model';
+import { UserPayloadModel } from 'src/models/user/user-payload.model';
 
 const env = environment();
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(forwardRef(() => UserService))
-    private readonly usersService: UserService,
-    @Inject(forwardRef(() => Hash))
-    private readonly passwordHelper: Hash) {}
+    @Inject(forwardRef(() => UserService)) private readonly usersService: UserService,
+    @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
+    ) {}
 
   public async validateUser(username: string, password: string): Promise<UserModel> {
     const user = await this.usersService.findByUsername(username);
     const passwordHash: boolean = await this.passwordHelper.comparePassword(password, user.passwordHash);
 
     if (!passwordHash ) {
-
       return null;
     }
 
@@ -45,8 +43,8 @@ export class AuthService {
   }
 
   public  getRefresh(payload: UserModel): string {
-    const user = {
-      role: payload.userRole,
+    const user: UserModel = {
+      // role: payload.userRole,
       id: payload.id,
       username: payload.username,
     };

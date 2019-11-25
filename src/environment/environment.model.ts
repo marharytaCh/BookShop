@@ -5,4 +5,9 @@ export interface Environment {
   tokenLife?: number;
   tokenExpireIn?: number;
   connectionWithMongo?: string;
+  serviceMail?: string;
+  userMail?: string;
+  passwordMail?: string;
+  emailPort?: number;
+  secureMail?: boolean;
 }

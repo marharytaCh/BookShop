@@ -1,16 +1,18 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 
-import { UserModel, UpdateUserModel } from 'src/models';
+import { UserModel, UpdateUserModel, UserInfoModel, CreateUserModel} from 'src/models';
 import { UserRepo } from 'src/repositories';
 import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
 import * as bcrypt from 'bcrypt';
+import { ResetPassword } from 'src/models/reset-password.model';
+import { ChangePassword } from 'src/models/change-password.model';
 
 @Injectable()
 export class UserService {
   constructor(public readonly userRepo: UserRepo,
-              @Inject(forwardRef(() => Hash))
-              private readonly passwordHelper: Hash) {}
+              @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
+            ) {}
 
   public async getAll(): Promise<UserModel[]> {
     const usersModel: UserModel[] = new Array<UserModel>();
@@ -57,24 +59,58 @@ export class UserService {
     return usersModel;
   }
 
-  public async addUser(userModel: UserModel): Promise<UserModel> {
+  public async addUser(createUserModel: CreateUserModel, req): Promise<UserModel> {
+    const url: string = req.protocol + '://' + req.hostname;
+    const userModel: UserModel = {};
     const createUserDocument: UserDocument = {};
-    createUserDocument.firstName = userModel.firstName;
-    createUserDocument.lastName = userModel.lastName;
-    createUserDocument.username = userModel.username;
+    createUserDocument.firstName = createUserModel.firstName;
+    createUserDocument.lastName = createUserModel.lastName;
+    createUserDocument.username = createUserModel.username;
     createUserDocument.passwordSalt = await this.passwordHelper.getSalt();
-    createUserDocument.passwordHash = await this.passwordHelper.getHashing(userModel.password, createUserDocument.passwordSalt);
-    createUserDocument.userRole = userModel.userRole;
+    createUserDocument.passwordHash = await this.passwordHelper.getHashing(createUserModel.password, createUserDocument.passwordSalt);
+    createUserDocument.userRole = createUserModel.userRole;
+    createUserDocument.validCode = await this.passwordHelper.sendEmail(createUserModel.username, url);
+    createUserDocument.confirmEmail = false;
 
-    const createdUserDocument = await this.userRepo.addUser(createUserDocument);
-    const createdUserModel: UserModel = {};
-    createdUserModel.id = createdUserDocument.id;
-    createdUserModel.firstName = createdUserDocument.firstName;
-    createdUserModel.lastName = createdUserDocument.lastName;
-    createdUserModel.username = createdUserDocument.username;
-    createdUserModel.userRole = createdUserDocument.userRole;
+    const validEmail = await this.userRepo.validUser(createUserDocument.username);
+    const userRegistered = await this.userRepo.findByUsername(createUserDocument.username);
 
-    return createdUserModel;
+    if (!userRegistered && validEmail) {
+      const createdUserDocument = await this.userRepo.addUser(createUserDocument);
+      const createdUserModel: UserModel = {};
+      createdUserModel.id = createdUserDocument.id;
+      createdUserModel.firstName = createdUserDocument.firstName;
+      createdUserModel.lastName = createdUserDocument.lastName;
+      createdUserModel.username = createdUserDocument.username;
+      createdUserModel.userRole = createdUserDocument.userRole;
+
+      return createdUserModel;
+    }
+    const error: UserInfoModel = new UserInfoModel();
+    if (userRegistered) {
+      error.message = 'user already exist';
+      console.log(error.message);
+    }
+    if (!validEmail) {
+      error.message = 'your email is wrong';
+      console.log(error.message);
+    }
+  }
+
+  public async resetPassword(resetPassword: ResetPassword) {
+    const user = await this.userRepo.findByUsername(resetPassword.username);
+    if (user) {
+      const validCode = await this.passwordHelper.resetPassword(user.username);
+      user.passwordSalt = await this.passwordHelper.getSalt();
+      user.passwordHash = await this.passwordHelper.getHashing(validCode, user.passwordSalt);
+      const updatedUser = await this.userRepo.update(user);
+      const userModel: UserModel = {};
+      userModel.firstName = user.firstName;
+      userModel.lastName = user.lastName;
+      userModel.username = user.username;
+      userModel.confirmEmail = user.confirmEmail;
+      return userModel;
+    }
   }
 
   public async update(updateUserModel: UpdateUserModel): Promise<UserModel> {
@@ -97,6 +133,34 @@ export class UserService {
     return updateUser;
   }
 
+  public async changePassword(changePassword: ChangePassword) {
+    const user = await this.userRepo.findByUsername(changePassword.username);
+    const compearedPassword = await this.passwordHelper.comparePassword(changePassword.oldPassword, user.passwordHash)
+    const info = new UserInfoModel();
+    if (!user) {
+      info.message = 'User with this usernmae does not exist';
+      return info;
+    }
+    if (compearedPassword && (changePassword.newPassword === changePassword.repeatNewPassword)) {
+      user.passwordSalt = await this.passwordHelper.getSalt();
+      user.passwordHash = await this.passwordHelper.getHashing(changePassword.newPassword, user.passwordSalt);
+
+      const userWithNewPassword = await this.userRepo.update(user);
+      userWithNewPassword.passwordSalt = user.passwordSalt;
+      userWithNewPassword.passwordHash = user.passwordHash;
+      return userWithNewPassword;
+    }
+
+    if (!compearedPassword) {
+      info.message = 'Your old password is inncorect';
+      return info;
+    }
+    if (changePassword.newPassword !== changePassword.repeatNewPassword) {
+      info.message = 'Make sure that you entered correct new password';
+      return info;
+    }
+  }
+
   public async delete(userId: string): Promise<UserModel> {
     const deletedUser: UserModel = {};
     const deletedUserDocument = await this.userRepo.delete(userId);
@@ -116,7 +180,25 @@ export class UserService {
     user.username = userDocument.username;
     user.passwordSalt = userDocument.passwordSalt;
     user.passwordHash = userDocument.passwordHash;
+    user.validCode = userDocument.validCode;
+    user.confirmEmail = userDocument.confirmEmail;
 
     return user;
+  }
+
+  public async isUserValid(token: string, user: UserModel) {
+    if (user.validCode === token) {
+      user.confirmEmail = true;
+    }
+    user.validCode = '';
+    const userDocument: UserDocument = await this.userRepo.update(user);
+    const info = new UserInfoModel();
+    if (userDocument) {
+      info.message = 'Confirmed';
+      return info;
+    }
+    info.message = 'Сonfirmation error';
+
+    return info;
   }
 }

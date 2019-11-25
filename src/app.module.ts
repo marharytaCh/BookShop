@@ -14,6 +14,7 @@ import { BooksService, UserService, AuthService, AuthorService } from 'src/servi
 import { Environment, environment } from 'src/environment/index';
 
 import { AuthorRepo, BookRepo, UserRepo } from 'src/repositories';
+import { MulterModule } from '@nestjs/platform-express';
 
 const env: Environment = environment();
 @Module({
@@ -24,6 +25,9 @@ const env: Environment = environment();
             signOptions: { expiresIn: environment().tokenExpireIn},
           },
         ),
+        MulterModule.register({
+          dest: './images',
+        }),
       ],
   controllers: [AppController, BooksController, UserController, AuthController, AuthorController],
   providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy,

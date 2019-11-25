@@ -1,9 +1,9 @@
-import { Controller, Get, Param, Post, Body, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, Request } from '@nestjs/common';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from 'src/services';
-import { UserModel, CreateUserModel, UpdateUserModel } from 'src/models';
+import { UserModel, UpdateUserModel } from 'src/models';
 import { UserDocument } from 'src/documents';
-import { is } from '@babel/types';
+import { Roles } from 'src/common';
 
 @ApiUseTags('Users table')
 @Controller('users')
@@ -12,6 +12,7 @@ export class UserController {
     private userService: UserService,
   ) {}
   @Get()
+  @Roles('admin')
   public async getAll(): Promise<UserModel[]> {
     const users: UserModel[] = await this.userService.getAll();
 
@@ -19,6 +20,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Roles('admin')
   public async getbyId(@Param('id') id: UserDocument): Promise<UserModel> {
     const user: UserModel = await this.userService.getById(id);
 
@@ -32,11 +34,12 @@ export class UserController {
     return users;
   }
 
-  @Post()
-  public async addUser(@Body() userModel: CreateUserModel): Promise<UserModel> {
-    const user: UserDocument = await this.userService.addUser(userModel);
+  @Get('/confirm/:email/:token')
+  public async verificateEmail(@Param('email') email: string, @Param('token') token: string) {
+    const user = await this.userService.findByUsername(email);
+    const validate = await this.userService.isUserValid(token, user);
 
-    return user;
+    return validate;
   }
 
   @Put()

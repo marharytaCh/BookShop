@@ -1,9 +1,22 @@
-import { Controller, Get, Post, Param, Body, Res, HttpStatus, NotFoundException, Put, Query, Delete} from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Put, Query, Delete, UseInterceptors, UploadedFile} from '@nestjs/common';
 import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 import { BooksService } from 'src/services';
 import { BookModel, UpdateBookModel, CreateBook } from 'src/models';
 import { Book } from 'src/documents';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+export const editFileName = (req, file, callback) => {
+  const name = file.originalname.split('.')[0];
+  const fileExtName = extname(file.originalname);
+  const randomName = Array(4)
+    .fill(null)
+    .map(() => Math.round(Math.random() * 16).toString(16))
+    .join('');
+  callback(null, `${name}-${randomName}${fileExtName}`);
+};
 
 @ApiUseTags('books')
 @Controller('books')
@@ -33,12 +46,25 @@ export class BooksController {
     return books;
   }
 
-  @ApiOperation({ title: 'Create book' })
+  // @ApiOperation({ title: 'Create book' })
   @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @Post()
-  async addBook(@Body() createBookModel: CreateBook): Promise<BookModel> {
-    const addedBook: BookModel = await this.booksService.addBook(createBookModel);
+  @Post('file')
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: 'src/image',
+      filename: editFileName,
+    }),
+  }),
+  )
+  async addBook(@UploadedFile() file, @Body() createBookModel: CreateBook): Promise<BookModel> {
+    console.log('hi')
+    const response = {
+      originalname: file.originalname,
+      filename: file.filename,
+    };
+    console.log(response)
+    const addedBook: BookModel = await this.booksService.addBook(createBookModel, file);
 
     return addedBook;
   }

@@ -3,7 +3,8 @@ import { UpdateBookModel } from 'src/models';
 import { Book } from 'src/documents';
 import { CreateBook } from 'src/models';
 import { BookRepo } from 'src/repositories/book.repository';
-import { BookModel } from 'src/models/book.model';
+import { BookModel } from 'src/models/books/book.model';
+import fs = require('fs');
 
 @Injectable()
 export class BooksService {
@@ -63,7 +64,7 @@ export class BooksService {
     return booksModel;
   }
 
-  public async addBook(createBookModel: CreateBook): Promise<Book> {
+  public async addBook(createBookModel: CreateBook, file): Promise<Book> {
     const bookDocument: Book = {};
     bookDocument.name = createBookModel.name;
     bookDocument.description = createBookModel.description;
@@ -72,6 +73,7 @@ export class BooksService {
     bookDocument.currency = createBookModel.currency;
     bookDocument.type = createBookModel.type;
     bookDocument.author = createBookModel.author;
+    bookDocument.img = fs.readFileSync(file.path).toString('base64');
 
     const createdBook: BookModel = {};
     const bookDocumentCreated = await this.bookRepo.addBook(bookDocument);
@@ -83,6 +85,7 @@ export class BooksService {
     createdBook.currency = bookDocumentCreated.currency;
     createdBook.type = bookDocumentCreated.type;
     createdBook.author = bookDocumentCreated.author;
+    createdBook.img = bookDocumentCreated.img;
 
     return createdBook;
   }
