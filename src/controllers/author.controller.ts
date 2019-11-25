@@ -2,8 +2,8 @@ import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Param, Put, Delete} from '@nestjs/common';
 import { AuthorService } from 'src/services';
 import { Author } from 'src/documents';
-import { CreateAuthorModel, UpdateAuthorModel } from 'src/models';
-import { AuthorModel } from 'src/models/author.model';
+import { CreateAuthorModel, UpdateAuthorModel, AuthorModel } from 'src/models';
+import { Roles } from 'src/common';
 
 @ApiUseTags('Author created on mongo')
 @Controller('authors')
@@ -34,6 +34,7 @@ export class AuthorController {
   }
 
   @Post()
+  @Roles('admin')
   @ApiOperation({title: 'Creating author'})
   public async addAuthor(@Body() addAuthorModel: CreateAuthorModel): Promise<Author> {
     const newAuthor: Author = await this.authorService.addAuthor(addAuthorModel);

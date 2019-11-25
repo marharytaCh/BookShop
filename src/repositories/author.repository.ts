@@ -5,8 +5,10 @@ import * as mongoose from 'mongoose';
 
 @Injectable()
 export class AuthorRepo {
-  constructor() {}
-  private readonly authorModel: Model<Author> = mongoose.model('Author', AuthorSchema);
+  private readonly authorModel: Model<Author>;
+  constructor() {
+    this.authorModel  = mongoose.model('Author', AuthorSchema);
+  }
 
   public async getAll(): Promise<Author[]> {
     const authors: Author[] = await this.authorModel.find().exec();

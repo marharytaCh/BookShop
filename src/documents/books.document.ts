@@ -1,7 +1,6 @@
-import * as mongoose from 'mongoose';
-import { AuthorSchema } from 'src/documents/authors.document';
+import { Document, Schema } from 'mongoose';
 
-export interface Book extends mongoose.Document {
+export interface Book extends Document {
     id?: string;
     name?: string;
     description?: string;
@@ -10,15 +9,16 @@ export interface Book extends mongoose.Document {
     currency?: string;
     type?: string;
     author?: string;
+    img?: string;
 }
 
-export const BookSchema = new mongoose.Schema({
+export const BookSchema = new Schema({
     name: String,
     description: String,
     price: Number,
     status: String,
     currency: String,
     type: String,
-    author: String, // [{type: mongoose.Schema.Types.ObjectId, ref: 'Author'}],
-    img: { data: Buffer, contentType: String },
+    author: [{type: Schema.Types.ObjectId, ref: 'Author'}],
+    img: String,
 });

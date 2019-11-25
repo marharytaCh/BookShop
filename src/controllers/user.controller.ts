@@ -1,11 +1,9 @@
 import { Controller, Get, Param, Post, Body, Put, Delete, Request } from '@nestjs/common';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from 'src/services';
-import { UserModel, CreateUserModel, UpdateUserModel } from 'src/models';
+import { UserModel, UpdateUserModel } from 'src/models';
 import { UserDocument } from 'src/documents';
-import { is } from '@babel/types';
-import { ResetPassword } from 'src/models/forgotPassword.model';
-import { ChangePassword } from 'src/models/changePassword.model';
+import { Roles } from 'src/common';
 
 @ApiUseTags('Users table')
 @Controller('users')
@@ -14,6 +12,7 @@ export class UserController {
     private userService: UserService,
   ) {}
   @Get()
+  @Roles('admin')
   public async getAll(): Promise<UserModel[]> {
     const users: UserModel[] = await this.userService.getAll();
 
@@ -21,6 +20,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Roles('admin')
   public async getbyId(@Param('id') id: UserDocument): Promise<UserModel> {
     const user: UserModel = await this.userService.getById(id);
 
@@ -42,31 +42,10 @@ export class UserController {
     return validate;
   }
 
-  @Post()
-  public async addUser(@Request() req, @Body() userModel: CreateUserModel): Promise<UserModel> {
-    const user: UserDocument = await this.userService.addUser(userModel, req);
-
-    return user;
-  }
-
-  @Post('/resetPassword')
-  public async resetPassword(@Body() resetPassword: ResetPassword) {
-    const user = await this.userService.resetPassword(resetPassword);
-
-    return user;
-  }
-
   @Put()
   async update(@Body() updateUserModel: UpdateUserModel): Promise<UserModel> {
     const updatedUser: UserModel = await this.userService.update(updateUserModel);
 
-    return updatedUser;
-  }
-
-  @Post('/changePassword')
-  public async changePassword(@Body() changePassword: ChangePassword) {
-    const updatedUser = await this.userService.changePassword(changePassword);
-    
     return updatedUser;
   }
 

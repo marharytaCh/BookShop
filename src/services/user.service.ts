@@ -5,14 +5,14 @@ import { UserRepo } from 'src/repositories';
 import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
 import * as bcrypt from 'bcrypt';
-import { ResetPassword } from 'src/models/forgotPassword.model';
-import { ChangePassword } from 'src/models/changePassword.model';
+import { ResetPassword } from 'src/models/reset-password.model';
+import { ChangePassword } from 'src/models/change-password.model';
 
 @Injectable()
 export class UserService {
   constructor(public readonly userRepo: UserRepo,
-              @Inject(forwardRef(() => Hash))
-              private readonly passwordHelper: Hash) {}
+              @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
+            ) {}
 
   public async getAll(): Promise<UserModel[]> {
     const usersModel: UserModel[] = new Array<UserModel>();

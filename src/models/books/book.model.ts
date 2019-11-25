@@ -7,4 +7,5 @@ export interface BookModel {
   currency?: string;
   type?: string;
   author?: string;
+  img?: string;
 }

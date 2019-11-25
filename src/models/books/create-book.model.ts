@@ -15,4 +15,5 @@ export class CreateBook {
   type: string;
   @ApiModelProperty()
   author: string;
+  img: string;
 }

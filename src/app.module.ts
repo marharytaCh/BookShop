@@ -16,16 +16,20 @@ import { Environment, environment } from 'src/environment/index';
 import { BookSchema } from 'src/documents';
 
 import { AuthorRepo, BookRepo, UserRepo } from 'src/repositories';
+import { MulterModule } from '@nestjs/platform-express';
 
 const env: Environment = environment();
 @Module({
-  imports:[
+  imports: [
             PassportModule.register({defaultStrategy: 'jwt'}),
           JwtModule.register({
             secret: env.tokenSecret,
             signOptions: { expiresIn: environment().tokenExpireIn},
           },
         ),
+        MulterModule.register({
+          dest: './images',
+        }),
       ],
   controllers: [AppController, BooksController, UserController, AuthController, AuthorController],
   providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy,

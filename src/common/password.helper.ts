@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import { Environment, environment } from 'src/environment';
-import { CreateTransportModel } from 'src/models/createTransport.model';
-import { MailOptionModel } from 'src/models/mailOption.model';
+import { CreateTransportModel } from 'src/models/create-transport.model';
+import { MailOptionModel } from 'src/models/mail-option.model';
 
-const env: Environment = environment();
 @Injectable()
 export class Hash {
-  constructor() {}
 
+  private env: Environment = environment();
   private saltRounds = 10;
 
   public async getSalt(): Promise<string> {
@@ -32,19 +31,20 @@ export class Hash {
 
   public async sendEmail(username: string, url: string) {
     try {
+      const { serviceMail, emailPort, secureMail, userMail, passwordMail } = this.env;
       const transportModel: CreateTransportModel = nodemailer.createTransport({
-        service: env.serviceMail,
-        port: env.emailPort,
-        secure: env.secureMail,
+        service: serviceMail,
+        port: emailPort,
+        secure: secureMail,
         auth: {
-          user: env.userMail,
-          pass: env.passwordMail,
+          user: userMail,
+          pass: passwordMail,
         },
       });
-      const token: number = await Math.random();
+      const token: number = Math.random();
 
       const mailOptions: MailOptionModel = {
-        from: env.userMail,
+        from: userMail,
         to: username,
         subject: 'BookShop. Verificate your email!',
         html: `<a href="${url}/users/confirm/${username}/${token}" style = "background-color: red;
@@ -54,8 +54,9 @@ export class Hash {
                                     text-transform: uppercase;">
         Verificate</a>`,
       };
-      await transportModel.sendMail(mailOptions);
+      transportModel.sendMail(mailOptions);
       const result = token.toString()
+
       return result ;
     } catch (error) {
       const messegeError: string = error;
@@ -66,19 +67,20 @@ export class Hash {
 
   public async resetPassword(username: string) {
     try {
+      const { serviceMail, emailPort, secureMail, userMail, passwordMail } = this.env;
       const transportModel: CreateTransportModel = nodemailer.createTransport({
-        service: env.serviceMail,
-        port: env.emailPort,
-        secure: env.secureMail,
+        service: serviceMail,
+        port: emailPort,
+        secure: secureMail,
         auth: {
-          user: env.userMail,
-          pass: env.passwordMail,
+          user: userMail,
+          pass: passwordMail,
         },
       });
-      const token: string = Math.random().toString(36).slice(2, 2 + Math.max(1, Math.min(10))) ;
+      const token: string = Math.random().toString(36).substring(2) + Math.max(1, Math.min(10)) ;
 
       const mailOptions: MailOptionModel = {
-        from: env.userMail,
+        from: userMail,
         to: username,
         subject: 'BookShop. Reset password',
         html: `<p>This is you new password ${token}</p>`,

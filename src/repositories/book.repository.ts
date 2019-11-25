@@ -7,9 +7,11 @@ import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class BookRepo {
+  private readonly bookModel: Model<Book>;
 
-  constructor() {}
-  private readonly bookModel: Model<Book> = mongoose.model('Book', BookSchema);
+  constructor() {
+    this.bookModel = mongoose.model('Book', BookSchema);
+  }
 
   public async getAll(): Promise<Book[]> {
     const books: Book[] = await this.bookModel.find().exec();
