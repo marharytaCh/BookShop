@@ -4,12 +4,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
-import { LoggerMiddleware, AllExceptionFilter, LocalStrategy, JwtStrategy, RolesGuard, Hash } from 'src/common';
+import { LoggerMiddleware, AllExceptionFilter, LocalStrategy, JwtStrategy, RolesGuard, Hash, databaseProviders } from 'src/common';
 
 import { UserController, BooksController, AuthController, AuthorController } from 'src/controllers';
 import { AppController } from 'src/app.controller';
 
-import { BooksService, UserService, AuthService, AuthorService } from 'src/services/index';
+import { BooksService, UserService, AuthService, AuthorService } from 'src/services';
 
 import { Environment, environment } from 'src/environment/index';
 
@@ -30,7 +30,7 @@ const env: Environment = environment();
         }),
       ],
   controllers: [AppController, BooksController, UserController, AuthController, AuthorController],
-  providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy,
+  providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy, ...databaseProviders,
     BookRepo, AuthorRepo, UserRepo, Hash,
     {
       provide: APP_GUARD,

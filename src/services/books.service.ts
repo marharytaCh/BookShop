@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateBookModel } from 'src/models';
 import { Book } from 'src/documents';
-import { CreateBook } from 'src/models';
+import { CreateBookModel } from 'src/models';
 import { BookRepo } from 'src/repositories/book.repository';
 import { BookModel } from 'src/models/books/book.model';
 import fs = require('fs');
@@ -64,7 +64,7 @@ export class BooksService {
     return booksModel;
   }
 
-  public async addBook(createBookModel: CreateBook, file): Promise<Book> {
+  public async addBook(createBookModel: CreateBookModel, file): Promise<Book> {
     const bookDocument: Book = {};
     bookDocument.name = createBookModel.name;
     bookDocument.description = createBookModel.description;

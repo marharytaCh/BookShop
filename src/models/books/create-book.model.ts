@@ -1,6 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 
-export class CreateBook {
+export class CreateBookModel {
   @ApiModelProperty()
   name: string;
   @ApiModelProperty()
@@ -13,6 +13,8 @@ export class CreateBook {
   currency: string;
   @ApiModelProperty()
   type: string;
+  @ApiModelProperty()
+  isDeleted: boolean;
   @ApiModelProperty()
   author: string;
   img: string;

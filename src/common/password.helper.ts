@@ -93,4 +93,15 @@ export class Hash {
       return messegeError;
     }
   }
+
+  public generateId(): string {
+    const generateUuidv: string = 'xxxx-xxxx-1xxx-yxxx-xxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      const uuidv4: string = v.toString(16);
+      console.log(uuidv4)
+      return uuidv4;
+  });
+  console.log(generateUuidv)
+    return generateUuidv;
+  }
 }

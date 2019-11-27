@@ -17,4 +17,6 @@ export class UpdateBookModel {
     type: string;
     @ApiModelProperty()
     author: string;
+    @ApiModelProperty()
+    isDeleted: boolean;
 }

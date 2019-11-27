@@ -15,4 +15,10 @@ export const dev: Environment = {
   passwordMail: 'Margo1304.',
   emailPort: 587,
   secureMail: false,
+  databaseType: 'mysql',
+  databaseHost: '127.0.0.1',
+  databasePort: 3306,
+  databaseUsername: 'root',
+  databasePassword: '1304',
+  database: 'editions',
 };

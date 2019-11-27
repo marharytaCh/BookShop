@@ -5,7 +5,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AllExceptionFilter } from 'src/common/index';
 
 import { AppModule } from 'src/app.module';
-import { Environment, environment } from './environment';
+import { Environment, environment } from 'src/environment';
 import * as mongoose from 'mongoose';
 
 async function bootstrap() {

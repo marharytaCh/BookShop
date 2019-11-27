@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Author, AuthorSchema } from 'src/documents';
+import { Authors } from 'src/entity';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
+
+import database = require('src/entity/author.entity');
 
 @Injectable()
 export class AuthorRepo {
@@ -11,13 +14,15 @@ export class AuthorRepo {
   }
 
   public async getAll(): Promise<Author[]> {
-    const authors: Author[] = await this.authorModel.find().exec();
+    const authors: Author[] = await database.Authors.findAll();
 
     return authors;
   }
 
-  public async getById(authorId: Author): Promise<Author> {
-    const author: Author = await this.authorModel.findById(authorId);
+  public async getById(authorId: string): Promise<Author> {
+    const author: Author = await database.Authors.findOne({
+      where: { id: authorId },
+    });
 
     return author;
   }
@@ -28,10 +33,12 @@ export class AuthorRepo {
     return authors;
   }
 
-  public async addAuthor(addAuthorDocument: Author): Promise<Author> {
-    const newAuthorDocument: Model<Author> = new this.authorModel(addAuthorDocument);
-    const newAuthor: Author = await newAuthorDocument.save();
-
+  public async addAuthor(addAuthorDocument: Authors): Promise<Authors> {
+    // const newAuthorDocument: Model<Author> = new this.authorModel(addAuthorDocument);
+    console.log(addAuthorDocument)
+    const newAuthor: Authors = await addAuthorDocument.save();
+    console.log('dfghjkl')
+    console.log(newAuthor)
     return newAuthor;
   }
 
@@ -41,8 +48,10 @@ export class AuthorRepo {
     return newAuthor;
   }
 
-  public async delete(authorId: Author): Promise<Author> {
-    const deletedAuthor: Author = await this.authorModel.findByIdAndRemove(authorId);
+  public async delete(authorId: string): Promise<number> {
+    const deletedAuthor: number = await database.Authors.destroy({
+      where: { id: authorId },
+    });
 
     return deletedAuthor;
   }

@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { Author } from 'src/documents';
 import { AuthorRepo } from 'src/repositories';
 import { CreateAuthorModel, UpdateAuthorModel } from 'src/models';
 import { AuthorModel } from 'src/models/author/author.model';
+import { Authors } from 'src/entity';
+import { Hash } from 'src/common';
 
 @Injectable()
 export class AuthorService {
-  constructor( public readonly authorRepo: AuthorRepo) {}
+  constructor( @Inject(forwardRef(() => AuthorRepo)) private readonly authorRepo: AuthorRepo,
+               @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
+) {}
 
   public async getAll(): Promise<AuthorModel[]> {
     const authorsModel: AuthorModel[] = new Array<AuthorModel>();
@@ -17,11 +21,11 @@ export class AuthorService {
       authorModel.name = author.name;
       authorsModel.push(authorModel);
     }
-
+    console.log(typeof Authors)
     return authorsModel;
   }
 
-  public async getById(authorId: Author): Promise<AuthorModel> {
+  public async getById(authorId: string): Promise<AuthorModel> {
     const author: AuthorModel = {};
     const authors: Author = await this.authorRepo.getById(authorId);
     author.id = authors.id;
@@ -43,14 +47,18 @@ export class AuthorService {
   }
 
   public async addAuthor(addAuthorModel: CreateAuthorModel): Promise<Author> {
-    const createAutorDocument: Author = {};
+    const createAutorDocument: Authors = new Authors();
     createAutorDocument.name = addAuthorModel.name;
+    createAutorDocument.id = this.passwordHelper.generateId();
 
+    console.log(createAutorDocument)
     const authorDocumentCreated = await this.authorRepo.addAuthor(createAutorDocument);
-    const createdAuthor: AuthorModel = {};
+    console.log('sc1')
+    const createdAuthor: Authors = new Authors();
     createdAuthor.id = authorDocumentCreated.id;
     createdAuthor.name = authorDocumentCreated.name;
-
+    console.log('sc')
+    console.log(createdAuthor)
     return createdAuthor;
   }
 
@@ -67,11 +75,9 @@ export class AuthorService {
     return editeAuthor;
   }
 
-  public async delete(authorId: Author): Promise<AuthorModel> {
+  public async delete(authorId: string): Promise<AuthorModel> {
     const deletedAuthor: AuthorModel = {};
-    const deleteAuthorDocument: Author = await this.authorRepo.delete(authorId);
-    deletedAuthor.id = deleteAuthorDocument.id;
-    deletedAuthor.name = deleteAuthorDocument.name;
+    const deleteAuthorDocument: number = await this.authorRepo.delete(authorId);
 
     return deletedAuthor;
   }

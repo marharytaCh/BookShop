@@ -4,7 +4,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 
 import { BooksService } from 'src/services';
-import { BookModel, UpdateBookModel, CreateBook } from 'src/models';
+import { BookModel, UpdateBookModel, CreateBookModel } from 'src/models';
 import { Book } from 'src/documents';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -57,8 +57,7 @@ export class BooksController {
     }),
   }),
   )
-  async addBook(@UploadedFile() file, @Body() createBookModel: CreateBook): Promise<BookModel> {
-    console.log('hi')
+  async addBook(@UploadedFile() file, @Body() createBookModel: CreateBookModel): Promise<BookModel> {
     const response = {
       originalname: file.originalname,
       filename: file.filename,

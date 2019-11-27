@@ -5,7 +5,7 @@ import { Author } from 'src/documents';
 import { CreateAuthorModel, UpdateAuthorModel, AuthorModel } from 'src/models';
 import { Roles } from 'src/common';
 
-@ApiUseTags('Author created on mongo')
+@ApiUseTags('Authors')
 @Controller('authors')
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
@@ -20,7 +20,7 @@ export class AuthorController {
 
   @Get(':id')
   @ApiOperation({title: 'Getting all authors by id'})
-  public async getById(@Param('id') id: Author): Promise<AuthorModel> {
+  public async getById(@Param('id') id: string): Promise<AuthorModel> {
     const author: AuthorModel = await this.authorService.getById(id);
 
     return author;
@@ -34,9 +34,9 @@ export class AuthorController {
   }
 
   @Post()
-  @Roles('admin')
   @ApiOperation({title: 'Creating author'})
   public async addAuthor(@Body() addAuthorModel: CreateAuthorModel): Promise<Author> {
+    console.log('hi')
     const newAuthor: Author = await this.authorService.addAuthor(addAuthorModel);
 
     return newAuthor;
@@ -52,7 +52,7 @@ export class AuthorController {
 
   @Delete(':id')
   @ApiOperation({title: 'Delete author by id'})
-  public async delete(@Param('id') id: Author): Promise<Author> {
+  public async delete(@Param('id') id: string): Promise<Author> {
     const deletedAuthor: Author = await this.authorService.delete(id);
 
     return deletedAuthor;
