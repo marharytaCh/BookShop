@@ -1,5 +1,5 @@
 import { Table, Model, Column, DataType, HasMany } from 'sequelize-typescript';
-import { Order } from 'src/entity';
+import { Order, UserInRole } from 'src/entity';
 import { Role } from './role.entity';
 
 @Table({timestamps: false})
@@ -41,8 +41,11 @@ export class User extends Model<User> {
   })
   isDeleted: boolean;
 
-  // @HasMany(() => Order, 'userId')
-  // order: Order[];
+  @HasMany(() => Order, 'userId')
+  order: Order[];
+
+  @HasMany(() => UserInRole, 'userId')
+  userInRole: UserInRole[];
 }
 // import { Table, Column, Model, DataType, BelongsToMany, HasMany } from 'sequelize-typescript';
 // import { PrintingEdition, AuthorInBook } from 'src/entity';

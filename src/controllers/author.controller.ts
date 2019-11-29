@@ -1,9 +1,10 @@
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Param, Put, Delete} from '@nestjs/common';
 import { AuthorService } from 'src/services';
-import { Author } from 'src/documents';
+import { AuthorDocument } from 'src/documents';
 import { CreateAuthorModel, UpdateAuthorModel, AuthorModel } from 'src/models';
 import { Roles } from 'src/common';
+import { Author } from 'src/entity';
 
 @ApiUseTags('Authors')
 @Controller('authors')
@@ -12,26 +13,26 @@ export class AuthorController {
 
   @Get()
   @ApiOperation({title: 'Getting all authors'})
-  public async getAll(): Promise<AuthorModel[]> {
-    const authors: AuthorModel[] = await this.authorService.getAll();
+  public async getAll(){
+    const authors = await this.authorService.getAll();
 
     return authors;
   }
 
-  @Get(':id')
-  @ApiOperation({title: 'Getting all authors by id'})
-  public async getById(@Param('id') id: string): Promise<AuthorModel> {
-    const author: AuthorModel = await this.authorService.getById(id);
+  // @Get(':id')
+  // @ApiOperation({title: 'Getting all authors by id'})
+  // public async getById(@Param('id') id: string): Promise<AuthorModel> {
+  //   const author: AuthorModel = await this.authorService.getById(id);
 
-    return author;
-  }
+  //   return author;
+  // }
 
-  @Get(':offset/:limit')
-  public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<AuthorModel[]> {
-    const authors: AuthorModel[] = await this.authorService.getPagination(+offset, +limit);
+  // @Get(':offset/:limit')
+  // public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<AuthorModel[]> {
+  //   const authors: AuthorModel[] = await this.authorService.getPagination(+offset, +limit);
 
-    return authors;
-  }
+  //   return authors;
+  // }
 
   @Post()
   @ApiOperation({title: 'Creating author'})
@@ -42,20 +43,20 @@ export class AuthorController {
     return newAuthor;
   }
 
-  @Put()
-  @ApiOperation({title: 'Edit information about author'})
-  public async update(@Body() updateAuthorModel: UpdateAuthorModel): Promise<Author> {
-    const newAuthor: Author = await this.authorService.update(updateAuthorModel);
+  // @Put()
+  // @ApiOperation({title: 'Edit information about author'})
+  // public async update(@Body() updateAuthorModel: UpdateAuthorModel): Promise<Author> {
+  //   const newAuthor: Author = await this.authorService.update(updateAuthorModel);
 
-    return newAuthor;
-  }
+  //   return newAuthor;
+  // }
 
-  @Delete(':id')
-  @ApiOperation({title: 'Delete author by id'})
-  public async delete(@Param('id') id: string): Promise<Author> {
-    const deletedAuthor: Author = await this.authorService.delete(id);
+  // @Delete(':id')
+  // @ApiOperation({title: 'Delete author by id'})
+  // public async delete(@Param('id') id: string): Promise<Author> {
+  //   const deletedAuthor: Author = await this.authorService.delete(id);
 
-    return deletedAuthor;
-  }
+  //   return deletedAuthor;
+  // }
 
 }

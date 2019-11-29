@@ -1,36 +1,44 @@
-import { Table, Model, Column, DataType, BelongsToMany, HasMany } from 'sequelize-typescript';
-import { Authors, AuthorInBook, OrderItem } from 'src/entity';
+import { Table, Column, Model, DataType, BelongsToMany, HasMany } from 'sequelize-typescript';
+import { OrderItem, AuthorInBooks, Author } from 'src/entity';
 
-@Table
+@Table({timestamps: false})
 export class PrintingEdition extends Model<PrintingEdition> {
-  @Column({allowNull: false})
-  name: string;
-
-  @Column({allowNull: false})
-  description: string;
-
-  @Column({allowNull: false})
-  price: number;
-
-  @Column({
-    type: DataType.BOOLEAN,
+    @Column({
+    type: DataType.UUID,
+    unique: true,
     allowNull: false,
-    defaultValue: false,
-  })
-  isDeleted: boolean;
+    primaryKey: true,
+    })
+    id: string;
 
-  @Column({allowNull: false})
-  status: string;
+    @Column({allowNull: false})
+    name: string;
 
-  @Column({allowNull: false})
-  currency: string;
+    @Column({allowNull: false})
+    description: string;
 
-  @Column({allowNull: false})
-  type: string;
+    @Column({allowNull: false})
+    price: number;
 
-  @BelongsToMany(() => Authors, () => AuthorInBook)
-  authors: Authors[];
+    @Column({
+      type: DataType.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    })
+    isDeleted: boolean;
 
-  // @HasMany(() => OrderItem, 'pritingEditionId')
-  // orderItems: OrderItem[];
+    @Column({allowNull: false})
+    status: string;
+
+    @Column({allowNull: false})
+    currency: string;
+
+    @Column({allowNull: false})
+    type: string;
+
+    @HasMany(() => OrderItem, 'pritingEditionId')
+    orderItems: OrderItem[];
+
+    @HasMany(() => AuthorInBooks, 'bookId')
+    authorBooks: AuthorInBooks[];
 }

@@ -1,14 +1,26 @@
-import { Table, Model, Column, DataType, ForeignKey } from 'sequelize-typescript';
-import { Authors, PrintingEdition } from 'src/entity';
+import { Author, PrintingEdition } from 'src/entity';
+import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 
-@Table
-export class AuthorInBook extends Model<AuthorInBook> {
-  @ForeignKey(() => PrintingEdition)
-  @Column
-  printingEditionId: number;
+@Table({timestamps: false})
+export class AuthorInBooks extends Model<AuthorInBooks> {
 
-  @ForeignKey(() => Authors)
-  @Column
-  authorsId: number;
+    @Column({
+        type: DataType.UUID,
+        unique: true,
+        allowNull: false,
+        primaryKey: true,
+    })
+    id: string;
 
+    @ForeignKey(() => Author)
+    @Column({type: DataType.UUID, allowNull: false})
+    authorId: string;
+    @BelongsTo(() => Author, 'authorId')
+    author: Author;
+
+    @ForeignKey(() => PrintingEdition)
+    @Column({type: DataType.UUID, allowNull: false})
+    bookId: string;
+    @BelongsTo(() => PrintingEdition, 'bookId')
+    book: PrintingEdition;
 }

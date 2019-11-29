@@ -20,5 +20,5 @@ export const dev: Environment = {
   databasePort: 3306,
   databaseUsername: 'root',
   databasePassword: '1304',
-  database: 'editions',
+  database: 'shop',
 };

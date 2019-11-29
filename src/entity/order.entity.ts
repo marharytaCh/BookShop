@@ -35,9 +35,9 @@ export class Order extends Model<Order> {
     allowNull: false,
   })
   paymentId: string;
-  // @BelongsTo(() => Payment, 'paymentId')
-  // payment: Payment;
+  @BelongsTo(() => Payment, 'paymentId')
+  payment: Payment;
 
-  // @HasMany(() => OrderItem, 'orderId')
-  // orderItems: OrderItem[];
+  @HasMany(() => OrderItem, 'orderId')
+  orderItems: OrderItem[];
 }

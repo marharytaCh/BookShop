@@ -1,19 +1,27 @@
-import { Table, Column, DataType, Model, HasMany, BelongsToMany } from 'sequelize-typescript';
-import { PrintingEdition } from './printing-edition.entity';
-import { AuthorInBook } from '.';
+import { AuthorInBooks, PrintingEdition } from 'src/entity';
+import { Table, Column, Model, DataType, BelongsToMany, HasMany } from 'sequelize-typescript';
 
-@Table
-export class Authors extends Model<Authors> {
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  isDeleted: boolean;
+@Table({timestamps: false})
+export class Author extends Model<Author> {
+      @Column({
+        type: DataType.UUID,
+        unique: true,
+        allowNull: false,
+        primaryKey: true,
+    })
+    id: string;
 
-  @Column({allowNull: false})
-  name: string;
+    @Column({
+      type: DataType.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    })
+    isDeleted: boolean;
 
-  @BelongsToMany(() => PrintingEdition, () => AuthorInBook)
-  printingEditions: PrintingEdition[];
+    @Column({allowNull: false})
+    name: string;
+
+    @HasMany(() => AuthorInBooks, 'authorId')
+    authorBooks: AuthorInBooks[];
+
 }

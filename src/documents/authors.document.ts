@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 
-export interface Author extends mongoose.Document {
+export interface AuthorDocument extends mongoose.Document {
     id?: string;
     name?: string;
 }

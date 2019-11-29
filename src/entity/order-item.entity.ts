@@ -23,8 +23,8 @@ export class OrderItem extends Model<OrderItem> {
     allowNull: false,
   })
   pritingEditionId: string;
-  // @BelongsTo(() => PrintingEdition, 'pritingEditionId')
-  // printingEdition: PrintingEdition;
+  @BelongsTo(() => PrintingEdition, 'pritingEditionId')
+  printingEdition: PrintingEdition;
 
   @ForeignKey(() => Order)
   @Column({
@@ -32,8 +32,8 @@ export class OrderItem extends Model<OrderItem> {
     allowNull: false,
   })
   orderId: string;
-  // @BelongsTo(() => Order, 'orderId')
-  // order: Order;
+  @BelongsTo(() => Order, 'orderId')
+  order: Order;
 
   @Column({ allowNull: false })
   count: number;

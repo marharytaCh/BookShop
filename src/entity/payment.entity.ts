@@ -14,6 +14,6 @@ export class Payment extends Model<Payment> {
   @Column({allowNull: false})
   transactionId: string;
 
-  // @HasOne(() => Order, 'paymentId')
-  // order: Order;
+  @HasOne(() => Order, 'paymentId')
+  order: Order;
 }

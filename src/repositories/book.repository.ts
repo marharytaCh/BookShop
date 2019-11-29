@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
 
-import { Book, BookSchema, Author, AuthorSchema } from 'src/documents';
+import { Book, BookSchema, AuthorDocument, AuthorSchema } from 'src/documents';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()

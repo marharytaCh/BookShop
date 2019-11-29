@@ -13,7 +13,7 @@ import { BooksService, UserService, AuthService, AuthorService } from 'src/servi
 
 import { Environment, environment } from 'src/environment/index';
 
-import { AuthorRepo, BookRepo, UserRepo } from 'src/repositories';
+import { AuthorRepository, BookRepo, UserRepo } from 'src/repositories';
 import { MulterModule } from '@nestjs/platform-express';
 
 const env: Environment = environment();
@@ -29,9 +29,25 @@ const env: Environment = environment();
           dest: './images',
         }),
       ],
-  controllers: [AppController, BooksController, UserController, AuthController, AuthorController],
-  providers: [BooksService, AuthService, AuthorService, UserService, LocalStrategy, JwtStrategy, ...databaseProviders,
-    BookRepo, AuthorRepo, UserRepo, Hash,
+  controllers: [
+    AppController,
+    BooksController,
+    UserController,
+    AuthController,
+    AuthorController,
+  ],
+  providers: [
+    BooksService,
+    AuthService,
+    AuthorService,
+    UserService,
+    LocalStrategy,
+    JwtStrategy,
+    BookRepo,
+    AuthorRepository,
+    UserRepo,
+    Hash,
+    ...databaseProviders,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
