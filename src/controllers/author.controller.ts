@@ -1,10 +1,11 @@
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Param, Put, Delete} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards} from '@nestjs/common';
 import { AuthorService } from 'src/services';
 import { AuthorDocument } from 'src/documents';
 import { CreateAuthorModel, UpdateAuthorModel, AuthorModel } from 'src/models';
 import { Roles } from 'src/common';
 import { Author } from 'src/entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiUseTags('Authors')
 @Controller('authors')
@@ -19,13 +20,13 @@ export class AuthorController {
     return authors;
   }
 
-  // @Get(':id')
-  // @ApiOperation({title: 'Getting all authors by id'})
-  // public async getById(@Param('id') id: string): Promise<AuthorModel> {
-  //   const author: AuthorModel = await this.authorService.getById(id);
+  @Get(':id')
+  @ApiOperation({title: 'Getting all authors by id'})
+  public async getById(@Param('id') id: string): Promise<AuthorModel> {
+    const author: AuthorModel = await this.authorService.getById(id);
 
-  //   return author;
-  // }
+    return author;
+  }
 
   // @Get(':offset/:limit')
   // public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<AuthorModel[]> {
@@ -37,7 +38,6 @@ export class AuthorController {
   @Post()
   @ApiOperation({title: 'Creating author'})
   public async addAuthor(@Body() addAuthorModel: CreateAuthorModel): Promise<Author> {
-    console.log('hi')
     const newAuthor: Author = await this.authorService.addAuthor(addAuthorModel);
 
     return newAuthor;
@@ -50,13 +50,14 @@ export class AuthorController {
 
   //   return newAuthor;
   // }
+  // @UseGuards(AuthGuard('jwt'))
+  // @Roles('admin')
+  @Delete(':id')
+  @ApiOperation({title: 'Delete author by id'})
+  public async delete(@Param('id') id: string): Promise<number> {
+    const deletedAuthor: number = await this.authorService.delete(id);
 
-  // @Delete(':id')
-  // @ApiOperation({title: 'Delete author by id'})
-  // public async delete(@Param('id') id: string): Promise<Author> {
-  //   const deletedAuthor: Author = await this.authorService.delete(id);
-
-  //   return deletedAuthor;
-  // }
+    return deletedAuthor;
+  }
 
 }

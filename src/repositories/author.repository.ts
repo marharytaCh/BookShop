@@ -26,13 +26,13 @@ export class AuthorRepository {
     return authors;
   }
 
-  // public async getById(authorId: string): Promise<Author> {
-  //   const author: Author = await database.Authors.findOne({
-  //     where: { id: authorId },
-  //   });
+  public async getById(authorId: string): Promise<Author> {
+    const author: Author = await database.Author.findOne({
+      where: { id: authorId },
+    });
 
-  //   return author;
-  // }
+    return author;
+  }
 
   // public async getPagination(offset: number, limit: number): Promise<Author[]> {
   //   const authors: Author[] = await this.authorModel.find().skip(offset).limit(limit).exec();
@@ -63,12 +63,12 @@ export class AuthorRepository {
   //   return newAuthor;
   // }
 
-  // public async delete(authorId: string): Promise<number> {
-  //   const deletedAuthor: number = await database.Authors.destroy({
-  //     where: { id: authorId },
-  //   });
+  public async delete(authorId: string): Promise<number> {
+    const deletedAuthor: number = await database.Author.destroy({
+      where: { id: authorId },
+    });
 
-  //   return deletedAuthor;
-  // }
+    return deletedAuthor;
+  }
 
 }

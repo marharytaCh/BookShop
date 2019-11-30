@@ -11,7 +11,7 @@ export class AuthorService {
                @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
 ) {}
 
-  public async getAll() {
+  public async getAll(): Promise<AuthorModel[]> {
     const authorsModel: Author[] = new Array<Author>();
     const authors: Author[] = await this.authorRepo.getAll();
     for (const author of authors) {
@@ -20,19 +20,18 @@ export class AuthorService {
       authorModel.name = author.name;
       authorsModel.push(authorModel);
     }
-    console.log('lalalalalalaaala')
-    return authorsModel; // : Promise<AuthorModel[]>
 
+    return authorsModel;
   }
 
-  // public async getById(authorId: string): Promise<AuthorModel> {
-  //   const author: AuthorModel = {};
-  //   const authors: Author = await this.authorRepo.getById(authorId);
-  //   author.id = authors.id;
-  //   author.name = authors.name;
+  public async getById(authorId: string): Promise<AuthorModel> {
+    const author: AuthorModel = {};
+    const authors: Author = await this.authorRepo.getById(authorId);
+    author.id = authors.id;
+    author.name = authors.name;
 
-  //   return author;
-  // }
+    return author;
+  }
 
   // public async getPagination(offset: number, limit: number): Promise<AuthorModel[]> {
   //   const authorsModel: AuthorModel[] = new Array<AuthorModel>();
@@ -47,18 +46,9 @@ export class AuthorService {
   // }
 
   public async addAuthor(addAuthorModel: CreateAuthorModel): Promise<Author> {
-    console.log('addAuthorModel', addAuthorModel);
     const createAuthor: Author = new Author();
-    console.log('jgflhygihdigdrpi');
-    createAuthor.name = addAuthorModel.name,
-    createAuthor.id = this.passwordHelper.generateId(),
-    // createAuthor.isDeleted = false,
-
-    console.log(createAuthor);
-
-    // createAuthor.name = addAuthorModel.name;
-    // createAuthor.id = this.passwordHelper.generateId();
-
+    createAuthor.name = addAuthorModel.name;
+    createAuthor.id = this.passwordHelper.generateId();
     const createdAuthor = await this.authorRepo.addAuthor(createAuthor);
     // console.log('sc1')
     // const createdAuthor: Author = new Author();
@@ -82,11 +72,11 @@ export class AuthorService {
   //   return editeAuthor;
   // }
 
-  // public async delete(authorId: string): Promise<AuthorModel> {
-  //   const deletedAuthor: AuthorModel = {};
-  //   const deleteAuthorDocument: number = await this.authorRepo.delete(authorId);
+  public async delete(authorId: string): Promise<number> {
+    const deletedAuthor: AuthorModel = new Author();
+    const deleteAuthorDocument: number = await this.authorRepo.delete(authorId);
 
-  //   return deletedAuthor;
-  // }
+    return deleteAuthorDocument;
+  }
 
 }
