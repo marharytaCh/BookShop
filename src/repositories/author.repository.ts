@@ -7,21 +7,9 @@ import database = require('src/entity');
 
 @Injectable()
 export class AuthorRepository {
-  // private readonly authorModel: Model<AuthorDocument>;
-  // const db = sequelize.getRepository(Author)
-  constructor() {
-    // this.authorModel  = mongoose.model('Author', AuthorSchema);
-  }
 
-  public async getAll()  {
-    let authors: Author[] = [];
-
-    try {
-      // const database = require('src/entity/author.entity');
-      authors = await database.Author.findAll();
-    } catch (exception) {
-      console.log(exception);
-    }
+  public async getAll(): Promise<Author[]>  {
+    const authors: Author[] = await database.Author.findAll();
 
     return authors;
   }
@@ -34,6 +22,14 @@ export class AuthorRepository {
     return author;
   }
 
+  public async getByIsRemoved(): Promise<Author[]> {
+    const author: Author[] = await database.Author.findAll({
+      where: { isDeleted: true },
+    });
+
+    return author;
+  }
+
   // public async getPagination(offset: number, limit: number): Promise<Author[]> {
   //   const authors: Author[] = await this.authorModel.find().skip(offset).limit(limit).exec();
 
@@ -41,27 +37,10 @@ export class AuthorRepository {
   // }
 
   public async addAuthor(addAuthorDocument: Author): Promise<Author> {
-    // const newAuthorDocument: Model<Author> = new this.authorModel(addAuthorDocument);
-    console.log('gfdsxlyukoygbvlhipfyf');
+    const newAuthor: Author = await addAuthorDocument.save();
 
-    console.log(addAuthorDocument);
-    try{
-      const newAuthor: Author = await addAuthorDocument.save();
-      console.log('dfghjkl');
-      console.log(newAuthor);
-      return newAuthor;
-    }
-    catch(e) {
-      console.log(e);
-    }
-  
+    return newAuthor;
   }
-
-  // public async update(updatedAuthor: Author): Promise<Author> {
-  //   const newAuthor: Author = await this.authorModel.findByIdAndUpdate(updatedAuthor.id, updatedAuthor);
-
-  //   return newAuthor;
-  // }
 
   public async delete(authorId: string): Promise<number> {
     const deletedAuthor: number = await database.Author.destroy({

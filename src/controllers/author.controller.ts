@@ -14,16 +14,24 @@ export class AuthorController {
 
   @Get()
   @ApiOperation({title: 'Getting all authors'})
-  public async getAll(){
-    const authors = await this.authorService.getAll();
+  public async getAll(): Promise<Author[]> {
+    const authors: Author[] = await this.authorService.getAll();
 
     return authors;
   }
 
+  @Get('/deleted')
+  @ApiOperation({title: 'Getting all authors by id'})
+  public async getByIsRemoved(): Promise<Author[]> {
+    const author: Author[] = await this.authorService.getByIsRemoved();
+
+    return author;
+  }
+
   @Get(':id')
   @ApiOperation({title: 'Getting all authors by id'})
-  public async getById(@Param('id') id: string): Promise<AuthorModel> {
-    const author: AuthorModel = await this.authorService.getById(id);
+  public async getById(@Param('id') id: string): Promise<Author> {
+    const author: Author = await this.authorService.getById(id);
 
     return author;
   }
@@ -43,13 +51,22 @@ export class AuthorController {
     return newAuthor;
   }
 
-  // @Put()
-  // @ApiOperation({title: 'Edit information about author'})
-  // public async update(@Body() updateAuthorModel: UpdateAuthorModel): Promise<Author> {
-  //   const newAuthor: Author = await this.authorService.update(updateAuthorModel);
+  @Put()
+  @ApiOperation({title: 'Edit information about author'})
+  public async update(@Body() updateAuthorModel: UpdateAuthorModel): Promise<Author> {
+    const newAuthor: Author = await this.authorService.update(updateAuthorModel);
 
-  //   return newAuthor;
-  // }
+    return newAuthor;
+  }
+
+  @Put(':id')
+  @ApiOperation({title: 'Remove'})
+  public async remove(@Param() author) {
+    const removed: Author = await this.authorService.removeAuthor(author.id);
+
+    return removed;
+  }
+
   // @UseGuards(AuthGuard('jwt'))
   // @Roles('admin')
   @Delete(':id')

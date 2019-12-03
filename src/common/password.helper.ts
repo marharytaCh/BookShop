@@ -55,7 +55,7 @@ export class Hash {
         Verificate</a>`,
       };
       transportModel.sendMail(mailOptions);
-      const result = token.toString()
+      const result = token.toString();
 
       return result ;
     } catch (error) {
@@ -102,6 +102,6 @@ export class Hash {
       return uuidv4;
   });
 
-  return generateUuidv; 
-}
+    return generateUuidv;
+  }
 }

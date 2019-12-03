@@ -1,130 +1,125 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { UpdateBookModel } from 'src/models';
 import { Book } from 'src/documents';
 import { CreateBookModel } from 'src/models';
 import { BookRepo } from 'src/repositories/book.repository';
 import { BookModel } from 'src/models/books/book.model';
 import fs = require('fs');
+import { PrintingEdition, AuthorInBooks } from 'src/entity';
+import { CreateBookAuthorModel } from 'src/models/books/book-author.model';
+import { Hash } from 'src/common';
+import { AuthorInBooksRepo } from 'src/repositories';
+import { thisExpression } from '@babel/types';
 
 @Injectable()
 export class BooksService {
-  constructor(public readonly bookRepo: BookRepo) {}
+  constructor(public readonly authorInBooksRepo: AuthorInBooksRepo,
+              public readonly bookRepo: BookRepo,
+              @Inject(forwardRef(() => Hash)) public passwordHelper: Hash) {}
 
-  public async getAll(): Promise<Book[]> {
-    const booksModel: BookModel[] = new Array<BookModel>();
-    const books: Book[] = await this.bookRepo.getAll();
-    for (const book of books) {
-      const bookModel: BookModel = {} ;
-      bookModel.id = book.id;
-      bookModel.name = book.name;
-      bookModel.description = book.description;
-      bookModel.price = book.price;
-      bookModel.status = book.status;
-      bookModel.currency = book.currency;
-      bookModel.type = book.type;
-      bookModel.author = book.author;
+  public async getAll(): Promise<PrintingEdition[]> {
+    const books: PrintingEdition[] = await this.bookRepo.getAll();
 
-      booksModel.push(bookModel);
+    return books;
+  }
+
+  public async getById(bookId: string): Promise<PrintingEdition> {
+    const books: PrintingEdition = await this.bookRepo.getById(bookId);
+
+    return books;
+  }
+
+  public async getByIsRemoved(): Promise<PrintingEdition[]> {
+    const removedBook: PrintingEdition[] = await this.bookRepo.getByIsRemoved();
+
+    return removedBook;
+  }
+
+  // public async getPagination(offset: number, limit: number): Promise<BookModel[]> {
+  //   const booksModel: BookModel[] = new Array<BookModel>();
+  //   const bookDocument: Book[] = await this.bookRepo.getPagination(offset, limit);
+  //   for (const book of bookDocument) {
+  //     const bookModel: BookModel = {} ;
+  //     bookModel.id = book.id;
+  //     bookModel.name = book.name;
+  //     bookModel.description = book.description;
+  //     bookModel.price = book.price;
+  //     bookModel.status = book.status;
+  //     bookModel.currency = book.currency;
+  //     bookModel.type = book.type;
+  //     bookModel.author = book.author;
+
+  //     booksModel.push(bookModel);
+  //   }
+  //   return booksModel;
+  // }
+
+  public async addBook(createBook: CreateBookAuthorModel): Promise<PrintingEdition> {
+    const book: PrintingEdition = new PrintingEdition();
+    book.id = this.passwordHelper.generateId();
+    book.name = createBook.book.name;
+    book.description = createBook.book.description;
+    book.price = createBook.book.price;
+    book.status = createBook.book.status;
+    book.currency = createBook.book.currency;
+    book.type = createBook.book.type;
+    // bookDocument.author = createBookModel.author;
+    // bookDocument.img = fs.readFileSync(file.path).toString('base64');
+
+    const bookCreated: PrintingEdition  = await this.bookRepo.addBook(book);
+    let query: string = 'INSERT INTO authorinbooks (id,authorId,bookId) VALUES ';
+    let i = 1;
+    for (const author of createBook.authors) {
+      const generatedId: string = this.passwordHelper.generateId();
+      // tslint:disable-next-line: max-line-length
+      query += ' (\'' + generatedId + '\', \'' + author.id + '\', \'' + book.id + '\')';
+      if (i < createBook.authors.length) {
+        query += ',';
+        }
+      if (i === createBook.authors.length) {
+      query += ';';
+      }
+      i++;
     }
+    const authors = await this.authorInBooksRepo.insertAuthorInBook(query);
 
-    return booksModel;
+    return bookCreated;
   }
 
-  public async getById(bookId: Book): Promise<BookModel> {
-    const book: BookModel = {};
-    const books: Book = await this.bookRepo.getById(bookId);
-    book.id = books.id;
-    book.name = books.name;
-    book.description = books.description;
-    book.price = books.price;
-    book.status = books.status;
-    book.currency = books.currency;
-    book.type = books.type;
-    book.author = books.author;
+  public async update(updatedBookModel: UpdateBookModel): Promise<PrintingEdition> {
+    const book: PrintingEdition = new PrintingEdition();
+    book.id = updatedBookModel.id;
+    book.name = updatedBookModel.name;
+    book.description = updatedBookModel.description;
+    book.price = updatedBookModel.price;
+    book.status = updatedBookModel.status;
+    book.currency = updatedBookModel.currency;
+    book.type = updatedBookModel.type;
 
-    return book;
+    const findBookById: PrintingEdition = await this.bookRepo.getById(book.id)
+    findBookById.name = book.name;
+    findBookById.description = book.description;
+    findBookById.price = book.price;
+    findBookById.status = book.status;
+    findBookById.currency = book.currency;
+    findBookById.type = book.type;
+
+    const updatedBook: PrintingEdition = await this.bookRepo.addBook(findBookById);
+
+    return updatedBook;
   }
 
-  public async getPagination(offset: number, limit: number): Promise<BookModel[]> {
-    const booksModel: BookModel[] = new Array<BookModel>();
-    const bookDocument: Book[] = await this.bookRepo.getPagination(offset, limit);
-    for (const book of bookDocument) {
-      const bookModel: BookModel = {} ;
-      bookModel.id = book.id;
-      bookModel.name = book.name;
-      bookModel.description = book.description;
-      bookModel.price = book.price;
-      bookModel.status = book.status;
-      bookModel.currency = book.currency;
-      bookModel.type = book.type;
-      bookModel.author = book.author;
+  public async removeAuthor(bookId: string) {
+    const findAuthorById = await this.bookRepo.getById(bookId);
+    findAuthorById.isDeleted = true;
 
-      booksModel.push(bookModel);
-    }
-    return booksModel;
+    const removedAuthor = await this.bookRepo.addBook(findAuthorById);
+
+    return removedAuthor;
   }
 
-  public async addBook(createBookModel: CreateBookModel, file): Promise<Book> {
-    const bookDocument: Book = {};
-    bookDocument.name = createBookModel.name;
-    bookDocument.description = createBookModel.description;
-    bookDocument.price = createBookModel.price;
-    bookDocument.status = createBookModel.status;
-    bookDocument.currency = createBookModel.currency;
-    bookDocument.type = createBookModel.type;
-    bookDocument.author = createBookModel.author;
-    bookDocument.img = fs.readFileSync(file.path).toString('base64');
-
-    const createdBook: BookModel = {};
-    const bookDocumentCreated = await this.bookRepo.addBook(bookDocument);
-    createdBook.id = bookDocumentCreated.id;
-    createdBook.name = bookDocumentCreated.name;
-    createdBook.description = bookDocumentCreated.description;
-    createdBook.price = bookDocumentCreated.price;
-    createdBook.status = bookDocumentCreated.status;
-    createdBook.currency = bookDocumentCreated.currency;
-    createdBook.type = bookDocumentCreated.type;
-    createdBook.author = bookDocumentCreated.author;
-    createdBook.img = bookDocumentCreated.img;
-
-    return createdBook;
-  }
-
-  public async update(updatedBookModel: UpdateBookModel): Promise<BookModel> {
-    const updateBookDocument: Book = {};
-    updateBookDocument.id = updatedBookModel.id;
-    updateBookDocument.name = updatedBookModel.name;
-    updateBookDocument.description = updatedBookModel.description;
-    updateBookDocument.price = updatedBookModel.price;
-    updateBookDocument.status = updatedBookModel.status;
-    updateBookDocument.currency = updatedBookModel.currency;
-    updateBookDocument.type = updatedBookModel.type;
-    updateBookDocument.author = updatedBookModel.author;
-
-    const updateBook: BookModel = {};
-    const updatedBook: Book = await this.bookRepo.update(updateBookDocument);
-    updateBook.name = updatedBook.name;
-    updateBook.description = updatedBook.description;
-    updateBook.price = updatedBook.price;
-    updateBook.status = updatedBook.status;
-    updateBook.currency = updatedBook.currency;
-    updateBook.type = updatedBook.type;
-    updateBook.author = updatedBook.author;
-
-    return updateBook;
-  }
-
-  async delete(bookId: string): Promise<Book> {
-    const deletedBook: BookModel = {};
-    const deleteBookDocument: Book  = await this.bookRepo.delete(bookId);
-    deletedBook.id = deleteBookDocument.id;
-    deletedBook.name = deleteBookDocument.name;
-    deletedBook.description = deleteBookDocument.description;
-    deletedBook.price = deleteBookDocument.price;
-    deletedBook.status = deleteBookDocument.status;
-    deletedBook.currency = deleteBookDocument.currency;
-    deletedBook.type = deleteBookDocument.type;
-    deletedBook.author = deleteBookDocument.author;
+  async delete(bookId: string): Promise<number> {
+    const deletedBook: number  = await this.bookRepo.delete(bookId);
 
     return deletedBook;
   }

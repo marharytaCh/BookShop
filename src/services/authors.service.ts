@@ -2,7 +2,6 @@ import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { AuthorDocument } from 'src/documents';
 import { AuthorRepository } from 'src/repositories';
 import { CreateAuthorModel, UpdateAuthorModel, AuthorModel } from 'src/models';
-// import { AuthorModel } from 'src/models/author/author.model';
 import { Author } from 'src/entity';
 import { Hash } from 'src/common';
 @Injectable()
@@ -11,26 +10,22 @@ export class AuthorService {
                @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
 ) {}
 
-  public async getAll(): Promise<AuthorModel[]> {
-    const authorsModel: Author[] = new Array<Author>();
+  public async getAll(): Promise<Author[]> {
     const authors: Author[] = await this.authorRepo.getAll();
-    for (const author of authors) {
-      const authorModel: Author = new Author();
-      authorModel.id = author.id;
-      authorModel.name = author.name;
-      authorsModel.push(authorModel);
-    }
 
-    return authorsModel;
+    return authors;
   }
 
-  public async getById(authorId: string): Promise<AuthorModel> {
-    const author: AuthorModel = {};
+  public async getById(authorId: string): Promise<Author> {
     const authors: Author = await this.authorRepo.getById(authorId);
-    author.id = authors.id;
-    author.name = authors.name;
 
-    return author;
+    return authors;
+  }
+
+  public async getByIsRemoved(): Promise<Author[]> {
+    const deletedAuthors: Author[] = await this.authorRepo.getByIsRemoved();
+
+    return deletedAuthors;
   }
 
   // public async getPagination(offset: number, limit: number): Promise<AuthorModel[]> {
@@ -49,34 +44,38 @@ export class AuthorService {
     const createAuthor: Author = new Author();
     createAuthor.name = addAuthorModel.name;
     createAuthor.id = this.passwordHelper.generateId();
+
     const createdAuthor = await this.authorRepo.addAuthor(createAuthor);
-    // console.log('sc1')
-    // const createdAuthor: Author = new Author();
-    // createdAuthor.id = authorDocumentCreated.id;
-    // createdAuthor.name = authorDocumentCreated.name;
-    // console.log('sc')
-    // console.log(createdAuthor)
+
     return createdAuthor;
   }
 
-  // public async update(updateAuthorModel: UpdateAuthorModel): Promise<Author> {
-  //   const updateAuthorDocument: Author = {};
-  //   updateAuthorDocument.id = updateAuthorModel.id;
-  //   updateAuthorDocument.name = updateAuthorModel.name;
+  public async update(author: UpdateAuthorModel): Promise<Author> {
+    const updateAuthor: Author = new Author();
+    updateAuthor.id = author.id;
+    updateAuthor.name = author.name;
 
-  //   const updatedAuthor: Author = await this.authorRepo.update(updateAuthorDocument);
-  //   const editeAuthor: AuthorModel = {};
-  //   editeAuthor.id = updatedAuthor.id;
-  //   editeAuthor.name = updatedAuthor.name;
+    const findAuthorById = await this.authorRepo.getById(updateAuthor.id);
+    findAuthorById.name = updateAuthor.name;
 
-  //   return editeAuthor;
-  // }
+    const updatedAuthor: Author = await this.authorRepo.addAuthor(findAuthorById);
+
+    return updatedAuthor;
+  }
+
+  public async removeAuthor(authorId: string) {
+    const findAuthorById = await this.authorRepo.getById(authorId);
+    findAuthorById.isDeleted = true;
+
+    const removedAuthor = await this.authorRepo.addAuthor(findAuthorById);
+
+    return removedAuthor;
+  }
 
   public async delete(authorId: string): Promise<number> {
-    const deletedAuthor: AuthorModel = new Author();
-    const deleteAuthorDocument: number = await this.authorRepo.delete(authorId);
+    const deleteAuthor: number = await this.authorRepo.delete(authorId);
 
-    return deleteAuthorDocument;
+    return deleteAuthor;
   }
 
 }

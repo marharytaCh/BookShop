@@ -4,6 +4,9 @@ import * as mongoose from 'mongoose';
 
 import { Book, BookSchema, AuthorDocument, AuthorSchema } from 'src/documents';
 import { InjectModel } from '@nestjs/mongoose';
+import { PrintingEdition } from 'src/entity';
+
+import database = require('src/entity');
 
 @Injectable()
 export class BookRepo {
@@ -13,46 +16,51 @@ export class BookRepo {
     this.bookModel = mongoose.model('Book', BookSchema);
   }
 
-  public async getAll(): Promise<Book[]> {
-    const books: Book[] = await this.bookModel.find().exec();
+  public async getAll(): Promise<PrintingEdition[]> {
+    const books: PrintingEdition[] = await database.PrintingEdition.findAll();
 
     return books;
   }
 
-  public async getById(bookId: Book): Promise<Book> {
-    const book: Book = await this.bookModel.findById(bookId);
+  public async getById(bookId: string): Promise<PrintingEdition> {
+    const book: PrintingEdition = await database.PrintingEdition.findOne({
+      where: { id: bookId },
+    });
 
     return book;
   }
 
-  public async getPagination(offset: number, limit: number): Promise<Book[]> {
-    const books: Book[] = await this.bookModel.find().skip(offset).limit(limit).exec();
+  public async getByIsRemoved(): Promise<PrintingEdition[]> {
+    const book: PrintingEdition[] = await database.PrintingEdition.findAll({
+      where: {isDeleted: true},
+    });
 
-    return books;
+    return book;
   }
 
-  public async addBook(bookDocument: Book): Promise<Book> {
-    const createdBookDocument: Model<Book> = new this.bookModel(bookDocument);
-    const createdBook: Book = await createdBookDocument.save();
+  // public async getPagination(offset: number, limit: number): Promise<Book[]> {
+  //   const books: Book[] = await this.bookModel.find().skip(offset).limit(limit).exec();
+
+  //   return books;
+  // }
+
+  public async addBook(book: PrintingEdition): Promise<PrintingEdition> {
+    const createdBook: PrintingEdition = await book.save();
 
     return createdBook;
   }
 
-  public async update(updateBookDocument: Book): Promise<Book> {
-    const updatedBook: Book = await this.bookModel.findByIdAndUpdate(updateBookDocument.id, updateBookDocument);
-
-    return updatedBook;
-  }
-
-  public async delete(id: string): Promise<Book> {
-    const deletedBook: Book = await this.bookModel.findByIdAndRemove(id);
+  public async delete(bookId: string): Promise<number> {
+    const deletedBook: number = await database.PrintingEdition.destroy({
+      where: { id: bookId },
+    });
 
     return deletedBook;
   }
 
-  public async findBook(bookId: Book): Promise<Book> {
-    const book: Book = await this.bookModel.findById(bookId.id).exec();
+  // public async findBook(bookId: Book): Promise<Book> {
+  //   const book: Book = await this.bookModel.findById(bookId.id).exec();
 
-    return book;
-  }
+  //   return book;
+  // }
 }

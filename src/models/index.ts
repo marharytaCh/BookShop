@@ -1,6 +1,6 @@
 export * from 'src/models/author/author.model';
 export * from 'src/models/author/createAuthor.model';
-export * from 'src/models/author/updateAuthor.model';
+export * from 'src/models/author/update-author.model';
 export * from 'src/models/books/book.model';
 export * from 'src/models/books/create-book.model';
 export * from 'src/models/books/update-book.model';

@@ -13,7 +13,7 @@ import { BooksService, UserService, AuthService, AuthorService } from 'src/servi
 
 import { Environment, environment } from 'src/environment/index';
 
-import { AuthorRepository, BookRepo, UserRepo } from 'src/repositories';
+import { AuthorRepository, BookRepo, UserRepo, AuthorInBooksRepo } from 'src/repositories';
 import { MulterModule } from '@nestjs/platform-express';
 
 const env: Environment = environment();
@@ -46,6 +46,7 @@ const env: Environment = environment();
     BookRepo,
     AuthorRepository,
     UserRepo,
+    AuthorInBooksRepo,
     Hash,
     ...databaseProviders,
     {

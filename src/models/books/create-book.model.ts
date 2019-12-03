@@ -15,7 +15,4 @@ export class CreateBookModel {
   type: string;
   @ApiModelProperty()
   isDeleted: boolean;
-  @ApiModelProperty()
-  author: string;
-  img: string;
 }

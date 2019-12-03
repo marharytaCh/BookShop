@@ -7,6 +7,8 @@ import { BooksService } from 'src/services';
 import { BookModel, UpdateBookModel, CreateBookModel } from 'src/models';
 import { Book } from 'src/documents';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { PrintingEdition } from 'src/entity';
+import { CreateBookAuthorModel } from 'src/models/books/book-author.model';
 
 export const editFileName = (req, file, callback) => {
   const name = file.originalname.split('.')[0];
@@ -32,55 +34,59 @@ export class BooksController {
     return booksArr;
   }
 
+  @Get('/deleted')
+  @ApiOperation({title: 'Getting all authors by id'})
+  public async getByIsRemoved(): Promise<PrintingEdition[]> {
+    const author: PrintingEdition[] = await this.booksService.getByIsRemoved();
+
+    return author;
+  }
+
   @Get(':id')
-  async getById(@Param('bookId') id: Book): Promise<BookModel> {
-    const book: BookModel = await this.booksService.getById(id);
+  public async getById(@Param('id') id: string): Promise<PrintingEdition> {
+    const book: PrintingEdition = await this.booksService.getById(id);
 
     return book;
   }
 
-  @Get(':offset/:limit')
-   public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<BookModel[]> {
-    const books = await this.booksService.getPagination(+offset, +limit);
+  // @Get(':offset/:limit')
+  //  public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<BookModel[]> {
+  //   const books = await this.booksService.getPagination(+offset, +limit);
 
-    return books;
-  }
+  //   return books;
+  // }
 
   // @ApiOperation({ title: 'Create book' })
   @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @Post('file')
-  @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: 'src/image',
-      filename: editFileName,
-    }),
-  }),
-  )
-  async addBook(@UploadedFile() file, @Body() createBookModel: CreateBookModel): Promise<BookModel> {
-    const response = {
-      originalname: file.originalname,
-      filename: file.filename,
-    };
-    console.log(response)
-    const addedBook: BookModel = await this.booksService.addBook(createBookModel, file);
+  @Post()
+  async addBook(@Body() createBook: CreateBookAuthorModel): Promise<PrintingEdition> {
+    const book: PrintingEdition = await this.booksService.addBook(createBook);
 
-    return addedBook;
+    return book;
+  }
+
+  @Put(':id')
+  @ApiOperation({title: 'Remove'})
+  public async remove(@Param() author) {
+    const removed: PrintingEdition = await this.booksService.removeAuthor(author.id);
+
+    return removed;
   }
 
   @Put()
   @ApiOperation({ title: 'Update book by id'})
-    async update(@Body() updateBookModel: UpdateBookModel): Promise<Book> {
-      const editedBook: Book = await this.booksService.update(updateBookModel);
+  async update(@Body() updateBookModel: UpdateBookModel): Promise<PrintingEdition> {
+    const editedBook: PrintingEdition = await this.booksService.update(updateBookModel);
 
-      return editedBook;
-    }
+    return editedBook;
+  }
 
   @Delete(':id')
-    async delete(@Param('id') id: string): Promise<Book> {
-      const deletedBook: BookModel = await this.booksService.delete(id);
+  public async delete(@Param('id') id: string): Promise<number> {
+    const deletedBook: number = await this.booksService.delete(id);
 
-      return deletedBook;
-   }
+    return deletedBook;
+  }
 
 }
