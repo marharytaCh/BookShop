@@ -49,10 +49,10 @@ export class UserController {
     return updatedUser;
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string): Promise<UserModel> {
-    const deletedUser: UserModel = await this.userService.delete(id);
+  // @Delete(':id')
+  // async delete(@Param('id') id: string): Promise<UserModel> {
+  //   const deletedUser: UserModel = await this.userService.delete(id);
 
-    return deletedUser;
-  }
+  //   return deletedUser;
+  // }
 }

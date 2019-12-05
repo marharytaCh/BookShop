@@ -6,14 +6,14 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { LoggerMiddleware, AllExceptionFilter, LocalStrategy, JwtStrategy, RolesGuard, Hash, databaseProviders } from 'src/common';
 
-import { UserController, BooksController, AuthController, AuthorController } from 'src/controllers';
+import { UserController, BooksController, AuthController, AuthorController, AuthorInBookController } from 'src/controllers';
 import { AppController } from 'src/app.controller';
 
-import { BooksService, UserService, AuthService, AuthorService } from 'src/services';
+import { BooksService, UserService, AuthService, AuthorService, AuthorInBookService } from 'src/services';
 
 import { Environment, environment } from 'src/environment/index';
 
-import { AuthorRepository, BookRepo, UserRepo, AuthorInBooksRepo } from 'src/repositories';
+import { AuthorRepo, BookRepo, UserRepo, AuthorInBooksRepo, RoleRepo, UserRoleRepo } from 'src/repositories';
 import { MulterModule } from '@nestjs/platform-express';
 
 const env: Environment = environment();
@@ -35,18 +35,22 @@ const env: Environment = environment();
     UserController,
     AuthController,
     AuthorController,
+    AuthorInBookController,
   ],
   providers: [
     BooksService,
     AuthService,
     AuthorService,
     UserService,
+    AuthorInBookService,
     LocalStrategy,
     JwtStrategy,
     BookRepo,
-    AuthorRepository,
+    AuthorRepo,
     UserRepo,
     AuthorInBooksRepo,
+    RoleRepo,
+    UserRoleRepo,
     Hash,
     ...databaseProviders,
     {

@@ -4,7 +4,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 
 import { BooksService } from 'src/services';
-import { BookModel, UpdateBookModel, CreateBookModel } from 'src/models';
+import { BookModel, UpdateBookModel, CreateBookModel, BookInfoModel } from 'src/models';
 import { Book } from 'src/documents';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PrintingEdition } from 'src/entity';
@@ -35,13 +35,22 @@ export class BooksController {
   }
 
   @Get('/deleted')
-  @ApiOperation({title: 'Getting all authors by id'})
+  @ApiOperation({title: 'Getting all books by id'})
   public async getByIsRemoved(): Promise<PrintingEdition[]> {
     const author: PrintingEdition[] = await this.booksService.getByIsRemoved();
 
     return author;
   }
 
+  @Get('author/:id')
+  @ApiOperation({title: 'Getting book by author id'})
+  public async getByAuthorId(@Param('id') id: string) {
+    const bookWithAuthor = await this.booksService.getBookWithAuthor(id);
+
+    return bookWithAuthor;
+  }
+
+  @ApiOperation({title: 'Getting book by id'})
   @Get(':id')
   public async getById(@Param('id') id: string): Promise<PrintingEdition> {
     const book: PrintingEdition = await this.booksService.getById(id);
@@ -49,14 +58,14 @@ export class BooksController {
     return book;
   }
 
-  // @Get(':offset/:limit')
-  //  public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<BookModel[]> {
-  //   const books = await this.booksService.getPagination(+offset, +limit);
+  @Get('pagination/:offset/:limit')
+   public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<BookInfoModel> {
+    const books = await this.booksService.getPagination(+offset, +limit);
 
-  //   return books;
-  // }
+    return books;
+  }
 
-  // @ApiOperation({ title: 'Create book' })
+  @ApiOperation({ title: 'Create book' })
   @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post()

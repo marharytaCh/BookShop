@@ -4,9 +4,10 @@ import * as mongoose from 'mongoose';
 
 import { Book, BookSchema, AuthorDocument, AuthorSchema } from 'src/documents';
 import { InjectModel } from '@nestjs/mongoose';
-import { PrintingEdition } from 'src/entity';
+import { PrintingEdition, Author } from 'src/entity';
 
 import database = require('src/entity');
+import sequelize = require('sequelize');
 
 @Injectable()
 export class BookRepo {
@@ -38,11 +39,34 @@ export class BookRepo {
     return book;
   }
 
-  // public async getPagination(offset: number, limit: number): Promise<Book[]> {
-  //   const books: Book[] = await this.bookModel.find().skip(offset).limit(limit).exec();
+  public async getAuthorByBookId(authorQuery: string): Promise<Author[]> {
+    const author: Author[] = await database.PrintingEdition.sequelize.query(authorQuery, {
+      plain: false,
+      raw: false,
+      type: sequelize.QueryTypes.SELECT,
+    });
 
-  //   return books;
-  // }
+    return author;
+  }
+
+  public async getBookById(bookQuery: string) {
+    const book: PrintingEdition[] = await database.PrintingEdition.sequelize.query(bookQuery, {
+      plain: false,
+      raw: false,
+      type: sequelize.QueryTypes.SELECT,
+     });
+
+    return book;
+  }
+
+  public async getPagination(offset: number, limit: number): Promise<PrintingEdition[]> {
+    const books: PrintingEdition[] = await database.PrintingEdition.findAll({
+      limit: +limit,
+      offset: +offset,
+    });
+
+    return books;
+  }
 
   public async addBook(book: PrintingEdition): Promise<PrintingEdition> {
     const createdBook: PrintingEdition = await book.save();

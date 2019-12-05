@@ -6,7 +6,7 @@ import { Author, PrintingEdition } from 'src/entity';
 import database = require('src/entity');
 
 @Injectable()
-export class AuthorRepository {
+export class AuthorRepo {
 
   public async getAll(): Promise<Author[]>  {
     const authors: Author[] = await database.Author.findAll();
@@ -29,12 +29,6 @@ export class AuthorRepository {
 
     return author;
   }
-
-  // public async getPagination(offset: number, limit: number): Promise<Author[]> {
-  //   const authors: Author[] = await this.authorModel.find().skip(offset).limit(limit).exec();
-
-  //   return authors;
-  // }
 
   public async addAuthor(addAuthorDocument: Author): Promise<Author> {
     const newAuthor: Author = await addAuthorDocument.save();

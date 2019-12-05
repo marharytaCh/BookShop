@@ -18,6 +18,7 @@ export class AuthService {
     ) {}
 
   public async validateUser(username: string, password: string): Promise<UserModel> {
+    let query = '';
     const user = await this.usersService.findByUsername(username);
     const passwordHash: boolean = await this.passwordHelper.comparePassword(password, user.passwordHash);
 

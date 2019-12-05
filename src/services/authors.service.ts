@@ -1,12 +1,12 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { AuthorDocument } from 'src/documents';
-import { AuthorRepository } from 'src/repositories';
+import { AuthorRepo } from 'src/repositories';
 import { CreateAuthorModel, UpdateAuthorModel, AuthorModel } from 'src/models';
 import { Author } from 'src/entity';
 import { Hash } from 'src/common';
 @Injectable()
 export class AuthorService {
-  constructor( private readonly authorRepo: AuthorRepository,
+  constructor( private readonly authorRepo: AuthorRepo,
                @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
 ) {}
 
@@ -17,9 +17,9 @@ export class AuthorService {
   }
 
   public async getById(authorId: string): Promise<Author> {
-    const authors: Author = await this.authorRepo.getById(authorId);
+    const author: Author = await this.authorRepo.getById(authorId);
 
-    return authors;
+    return author;
   }
 
   public async getByIsRemoved(): Promise<Author[]> {
@@ -27,18 +27,6 @@ export class AuthorService {
 
     return deletedAuthors;
   }
-
-  // public async getPagination(offset: number, limit: number): Promise<AuthorModel[]> {
-  //   const authorsModel: AuthorModel[] = new Array<AuthorModel>();
-  //   const authorDocument: Author[] = await this.authorRepo.getPagination(offset, limit);
-  //   for (const author of authorDocument) {
-  //     const authorModel: AuthorModel = {};
-  //     authorModel.id = author.id;
-  //     authorModel.name = author.name;
-  //     authorsModel.push(authorModel);
-  //   }
-  //   return authorsModel;
-  // }
 
   public async addAuthor(addAuthorModel: CreateAuthorModel): Promise<Author> {
     const createAuthor: Author = new Author();
@@ -54,10 +42,8 @@ export class AuthorService {
     const updateAuthor: Author = new Author();
     updateAuthor.id = author.id;
     updateAuthor.name = author.name;
-
     const findAuthorById = await this.authorRepo.getById(updateAuthor.id);
     findAuthorById.name = updateAuthor.name;
-
     const updatedAuthor: Author = await this.authorRepo.addAuthor(findAuthorById);
 
     return updatedAuthor;
@@ -66,7 +52,6 @@ export class AuthorService {
   public async removeAuthor(authorId: string) {
     const findAuthorById = await this.authorRepo.getById(authorId);
     findAuthorById.isDeleted = true;
-
     const removedAuthor = await this.authorRepo.addAuthor(findAuthorById);
 
     return removedAuthor;

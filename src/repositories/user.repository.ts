@@ -3,6 +3,8 @@ import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
 
 import { UserSchema, UserDocument } from 'src/documents/user.document';
+import { User } from 'src/entity';
+import database = require('src/entity');
 
 @Injectable()
 export class UserRepo {
@@ -28,9 +30,8 @@ export class UserRepo {
     return users;
   }
 
-  public async addUser(createUserDocument: UserDocument): Promise<UserDocument> {
-    const userDocument: Model<UserDocument> = new this.userModel(createUserDocument);
-    const newUser: UserDocument = await userDocument.save();
+  public async addUser(createUser: User): Promise<User> {
+    const newUser: User = await createUser.save();
 
     return newUser;
   }
@@ -47,11 +48,18 @@ export class UserRepo {
     return deletedUser;
   }
 
-  public async findByUsername(username: string): Promise<UserDocument> {
-    const element = {username};
-    const user: UserDocument = await this.userModel.findOne(element).exec();
-
+  public async findByUsername(userEmail: string): Promise<User> {
+    console.log('findByname', userEmail);
+   try{
+    const user: User = await database.User.findOne({
+      where: { email: userEmail },
+  });
+  console.log('foundUser', user);
     return user;
+   } catch(e) {
+     console.log(e);
+   }
+    
   }
 
   public async validUser(username: string) {

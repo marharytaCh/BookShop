@@ -4,8 +4,10 @@ import { ApiBearerAuth, ApiUseTags } from '@nestjs/swagger';
 import { AuthService, UserService } from 'src/services';
 import { AllExceptionFilter } from 'src/common/exception.filter';
 import { Token } from 'src/models/token.model';
-import { CreateUserModel, ResetPassword, ChangePassword, UserModel } from 'src/models';
+import { CreateUserModel, ResetPassword, ChangePassword, UserModel, UserInfoModel } from 'src/models';
 import { UserDocument } from 'src/documents';
+import { Hash } from 'src/common';
+import { User } from 'src/entity';
 
 @ApiBearerAuth()
 @ApiUseTags('Authentification')
@@ -13,6 +15,7 @@ import { UserDocument } from 'src/documents';
 export class AuthController {
   constructor(private readonly authService: AuthService,
               private userService: UserService,
+              public passwordHelper: Hash,
   ) { }
 
   @UseGuards(AuthGuard('local'))
@@ -30,30 +33,32 @@ export class AuthController {
   }
 
   @Post('register')
-  public async addUser(@Request() req, @Body() userModel: CreateUserModel): Promise<UserModel> {
-    const user: UserDocument = await this.userService.addUser(userModel, req);
+  public async addUser(@Request() req, @Body() createUser: CreateUserModel): Promise<UserInfoModel> {
+    const user: UserInfoModel = await this.userService.addUser(createUser, req);
 
     return user;
   }
 
-  @Post('/resetPassword')
-  public async resetPassword(@Body() resetPassword: ResetPassword) {
-    const user = await this.userService.resetPassword(resetPassword);
+  // @Post('/resetPassword')
+  // public async resetPassword(@Body() resetPassword: ResetPassword) {
+  //   const user = await this.userService.resetPassword(resetPassword);
 
-    return user;
-  }
+  //   return user;
+  // }
 
-  @Post('/changePassword')
-  public async changePassword(@Body() changePassword: ChangePassword) {
-    const updatedUser = await this.userService.changePassword(changePassword);
+  // @Post('/changePassword')
+  // public async changePassword(@Body() changePassword: ChangePassword) {
+  //   const updatedUser = await this.userService.changePassword(changePassword);
 
-    return updatedUser;
-  }
+  //   return updatedUser;
+  // }
 
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @Get('person')
   public async getProfile(@Request() req) {
-    console.log(req);
+    const user = await this.passwordHelper.hasUser(req);
+
+    return user;
   }
 }

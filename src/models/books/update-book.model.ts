@@ -15,8 +15,4 @@ export class UpdateBookModel {
     currency: string;
     @ApiModelProperty()
     type: string;
-    @ApiModelProperty()
-    author: string;
-    @ApiModelProperty()
-    isDeleted: boolean;
 }

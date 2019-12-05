@@ -1,9 +1,11 @@
 import { Table, Model, Column, DataType, HasMany } from 'sequelize-typescript';
 import { Order, UserInRole } from 'src/entity';
 import { Role } from './role.entity';
+import { ApiModelProperty } from '@nestjs/swagger';
 
 @Table({timestamps: false})
 export class User extends Model<User> {
+  @ApiModelProperty()
   @Column({
     type: DataType.UUID,
     unique: true,
@@ -12,21 +14,31 @@ export class User extends Model<User> {
   })
   id: string;
 
+  @ApiModelProperty()
   @Column({allowNull: false})
   firstName: string;
 
+  @ApiModelProperty()
   @Column({allowNull: false})
   lastName: string;
 
+  @ApiModelProperty()
   @Column({allowNull: false})
   passwordHash: string;
 
-  @Column({allowNull: false})
+  @ApiModelProperty()
+  @Column({allowNull: false,
+    validate: {
+      isEmail: true,
+    },
+  })
   email: string;
 
-  @Column({ allowNull: false })
+  @ApiModelProperty()
+  @Column({ allowNull: false})
   salt: string;
 
+  @ApiModelProperty()
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
@@ -34,6 +46,11 @@ export class User extends Model<User> {
   })
   emailConfirmed: boolean;
 
+  @ApiModelProperty()
+  @Column({ allowNull: true })
+  validCode: string;
+
+  @ApiModelProperty()
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
@@ -47,29 +64,3 @@ export class User extends Model<User> {
   @HasMany(() => UserInRole, 'userId')
   userInRole: UserInRole[];
 }
-// import { Table, Column, Model, DataType, BelongsToMany, HasMany } from 'sequelize-typescript';
-// import { PrintingEdition, AuthorInBook } from 'src/entity';
-
-// @Table({timestamps: false})
-// export class Authors extends Model<Authors> {
-//   @Column({
-//     type: DataType.UUID,
-//     unique: true,
-//     allowNull: false,
-//     primaryKey: true,
-//   })
-//   id: string;
-
-//   @Column({allowNull: false})
-//   name: string;
-
-//   @Column({
-//     type: DataType.BOOLEAN,
-//     allowNull: false,
-//     defaultValue: false,
-//   })
-//     isDeleted?: boolean;
-
-//   // @BelongsToMany(() => PrintingEdition, () => AuthorInBook)
-//   // books: PrintingEdition;
-// }

@@ -36,13 +36,6 @@ export class AuthorController {
     return author;
   }
 
-  // @Get(':offset/:limit')
-  // public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<AuthorModel[]> {
-  //   const authors: AuthorModel[] = await this.authorService.getPagination(+offset, +limit);
-
-  //   return authors;
-  // }
-
   @Post()
   @ApiOperation({title: 'Creating author'})
   public async addAuthor(@Body() addAuthorModel: CreateAuthorModel): Promise<Author> {
@@ -67,11 +60,12 @@ export class AuthorController {
     return removed;
   }
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @Roles('admin')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   @Delete(':id')
   @ApiOperation({title: 'Delete author by id'})
   public async delete(@Param('id') id: string): Promise<number> {
+    console.log('fgjdflj')
     const deletedAuthor: number = await this.authorService.delete(id);
 
     return deletedAuthor;

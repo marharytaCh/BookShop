@@ -1,15 +1,14 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { UpdateBookModel } from 'src/models';
+import { UpdateBookModel, UpdateBookWithAuthorModel, BookInfoModel } from 'src/models';
 import { Book } from 'src/documents';
 import { CreateBookModel } from 'src/models';
 import { BookRepo } from 'src/repositories/book.repository';
 import { BookModel } from 'src/models/books/book.model';
 import fs = require('fs');
-import { PrintingEdition, AuthorInBooks } from 'src/entity';
+import { PrintingEdition, AuthorInBooks, Author } from 'src/entity';
 import { CreateBookAuthorModel } from 'src/models/books/book-author.model';
 import { Hash } from 'src/common';
 import { AuthorInBooksRepo } from 'src/repositories';
-import { thisExpression } from '@babel/types';
 
 @Injectable()
 export class BooksService {
@@ -35,24 +34,34 @@ export class BooksService {
     return removedBook;
   }
 
-  // public async getPagination(offset: number, limit: number): Promise<BookModel[]> {
-  //   const booksModel: BookModel[] = new Array<BookModel>();
-  //   const bookDocument: Book[] = await this.bookRepo.getPagination(offset, limit);
-  //   for (const book of bookDocument) {
-  //     const bookModel: BookModel = {} ;
-  //     bookModel.id = book.id;
-  //     bookModel.name = book.name;
-  //     bookModel.description = book.description;
-  //     bookModel.price = book.price;
-  //     bookModel.status = book.status;
-  //     bookModel.currency = book.currency;
-  //     bookModel.type = book.type;
-  //     bookModel.author = book.author;
+  public async getBookWithAuthor(id: string) {
+    let authorQuery: string = 'SELECT authors.id, authors.name, authors.isDeleted FROM authorinbooks INNER JOIN authors ON authorinbooks.authorId = authors.id INNER JOIN printingeditions ON authorinbooks.bookId = printingeditions.id WHERE printingeditions.id = \'';
+    authorQuery += id + '\'';
+    const authorBookId: Author[] = await this.bookRepo.getAuthorByBookId(authorQuery);
+    let bookQuery = 'SELECT printingeditions.id, printingeditions.name, printingeditions.description, printingeditions.price, printingeditions.isDeleted, printingeditions.status, printingeditions.currency, printingeditions.type FROM authorinbooks INNER JOIN authors ON authorinbooks.authorId = authors.id INNER JOIN printingeditions ON authorinbooks.bookId = printingeditions.id WHERE printingeditions.id = \'';
+    bookQuery += id + '\'';
+    const getBookById: PrintingEdition[] = await this.bookRepo.getBookById(bookQuery);
+    const getBookByIdWithAuthors: UpdateBookWithAuthorModel = {};
+    getBookByIdWithAuthors.printingEdition = getBookById[0];
+    getBookByIdWithAuthors.authors = authorBookId;
 
-  //     booksModel.push(bookModel);
-  //   }
-  //   return booksModel;
-  // }
+    return getBookByIdWithAuthors;
+  }
+
+  public async getPagination(offset: number, limit: number): Promise<BookInfoModel> {
+    if (isNaN(+limit) || isNaN(+offset)) {
+      const error: BookInfoModel = new BookInfoModel();
+      error.message = 'You entered incorrect data, please enter take, skip (numbers)';
+
+      return error;
+  }
+
+    const printingEditions: PrintingEdition[] = await this.bookRepo.getPagination(offset, limit);
+    const printingEditionModel: BookInfoModel = new BookInfoModel();
+    printingEditionModel.printingEdition = printingEditions;
+
+    return printingEditionModel;
+  }
 
   public async addBook(createBook: CreateBookAuthorModel): Promise<PrintingEdition> {
     const book: PrintingEdition = new PrintingEdition();
@@ -63,8 +72,6 @@ export class BooksService {
     book.status = createBook.book.status;
     book.currency = createBook.book.currency;
     book.type = createBook.book.type;
-    // bookDocument.author = createBookModel.author;
-    // bookDocument.img = fs.readFileSync(file.path).toString('base64');
 
     const bookCreated: PrintingEdition  = await this.bookRepo.addBook(book);
     let query: string = 'INSERT INTO authorinbooks (id,authorId,bookId) VALUES ';
@@ -112,7 +119,6 @@ export class BooksService {
   public async removeAuthor(bookId: string) {
     const findAuthorById = await this.bookRepo.getById(bookId);
     findAuthorById.isDeleted = true;
-
     const removedAuthor = await this.bookRepo.addBook(findAuthorById);
 
     return removedAuthor;

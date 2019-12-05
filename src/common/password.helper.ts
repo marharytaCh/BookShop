@@ -4,6 +4,7 @@ import * as nodemailer from 'nodemailer';
 import { Environment, environment } from 'src/environment';
 import { CreateTransportModel } from 'src/models/create-transport.model';
 import { MailOptionModel } from 'src/models/mail-option.model';
+import { ValidateUserModel } from 'src/models';
 
 @Injectable()
 export class Hash {
@@ -100,8 +101,21 @@ export class Hash {
       const uuidv4: string = v.toString(16);
 
       return uuidv4;
-  });
+    });
 
     return generateUuidv;
   }
+
+  public async hasUser(req): Promise<ValidateUserModel> {
+    let token = req.headers.authorization;
+    token = token.substring('Bearer '.length).trim();
+    const jwt = require('jsonwebtoken');
+    const user: ValidateUserModel = jwt.decode(token);
+    const hasUser: ValidateUserModel = {};
+    hasUser.userId = user.userId;
+    hasUser.firstName = user.firstName;
+    hasUser.role = user.role;
+
+    return hasUser;
+}
 }
