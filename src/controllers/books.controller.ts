@@ -3,7 +3,7 @@ import { ApiUseTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { extname } from 'path';
 
 import { BooksService } from 'src/services';
-import { UpdateBookModel, BookInfoModel } from 'src/models';
+import { UpdateBookModel, BookInfoModel, BookFiltrationModel } from 'src/models';
 import { PrintingEdition } from 'src/entity';
 import { CreateBookAuthorModel } from 'src/models/books/book-author.model';
 import { Roles } from 'src/common';
@@ -52,7 +52,7 @@ export class BooksController {
   }
 
   @ApiOperation({title: 'Getting book by id'})
-  @Get(':id')
+  @Get('book/:id')
   public async getById(@Param('id') id: string): Promise<PrintingEdition> {
     const book: PrintingEdition = await this.booksService.getById(id);
 
@@ -62,6 +62,13 @@ export class BooksController {
   @Get('pagination/:offset/:limit')
    public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<BookInfoModel> {
     const books = await this.booksService.getPagination(+offset, +limit);
+
+    return books;
+  }
+
+  @Get('/filtration')
+   public async getFiltration(@Query() query: BookFiltrationModel){
+    const books = await this.booksService.getFiltration(query);
 
     return books;
   }

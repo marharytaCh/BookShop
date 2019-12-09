@@ -1,8 +1,7 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { UpdateBookModel, UpdateBookWithAuthorModel, BookInfoModel } from 'src/models';
+import { UpdateBookModel, UpdateBookWithAuthorModel, BookInfoModel, BookFiltrationModel, CreateBookAuthorModel } from 'src/models';
 import { BookRepo } from 'src/repositories/book.repository';
 import { PrintingEdition, Author } from 'src/entity';
-import { CreateBookAuthorModel } from 'src/models/books/book-author.model';
 import { Hash } from 'src/common';
 import { AuthorInBooksRepo } from 'src/repositories';
 
@@ -50,13 +49,43 @@ export class BooksService {
       error.message = 'You entered incorrect data, please enter take, skip (numbers)';
 
       return error;
-  }
+    }
 
     const printingEditions: PrintingEdition[] = await this.bookRepo.getPagination(offset, limit);
     const printingEditionModel: BookInfoModel = new BookInfoModel();
     printingEditionModel.printingEdition = printingEditions;
 
     return printingEditionModel;
+  }
+
+  public async getFiltration(bookFiltModel: BookFiltrationModel) {
+    const book: BookFiltrationModel = new BookFiltrationModel();
+    // book.name = bookFiltModel.name;
+    book.status = bookFiltModel.status;
+    book.minPrice = bookFiltModel.minPrice;
+    book.maxPrice = bookFiltModel.maxPrice;
+
+    let query = 'SELECT id, name, description, price, isDeleted, status, currency, type FROM PrintingEditions WHERE';
+
+    if (book.status && (book.maxPrice || book.minPrice)) {
+      query += ' `status` = \'' + book.status + '\' AND';
+    }
+    if (!book.maxPrice && !book.minPrice && book.status) {
+      query += ' `status` = \'' + book.status + '\'';
+    }
+    if (book.maxPrice && book.minPrice) {
+      query += ' `price` > ' + book.minPrice + ' AND';
+    }
+    if (book.minPrice && !book.maxPrice) {
+      query += ' `price` > ' + book.minPrice;
+    }
+    if (book.maxPrice) {
+      query += ' `price` < ' + book.maxPrice;
+    }
+
+    const filteredBooks = await this.bookRepo.getFiltration(query);
+    // console.log(filteredBooks)
+    return filteredBooks;
   }
 
   public async addBook(createBook: CreateBookAuthorModel): Promise<PrintingEdition> {
@@ -99,7 +128,7 @@ export class BooksService {
     book.currency = updatedBookModel.currency;
     book.type = updatedBookModel.type;
 
-    const findBookById: PrintingEdition = await this.bookRepo.getById(book.id)
+    const findBookById: PrintingEdition = await this.bookRepo.getById(book.id);
     findBookById.name = book.name;
     findBookById.description = book.description;
     findBookById.price = book.price;

@@ -7,8 +7,6 @@ import sequelize = require('sequelize');
 @Injectable()
 export class BookRepo {
 
-  constructor() {}
-
   public async getAll(): Promise<PrintingEdition[]> {
     const books: PrintingEdition[] = await database.PrintingEdition.findAll();
 
@@ -60,6 +58,16 @@ export class BookRepo {
     return books;
   }
 
+  public async getFiltration(query): Promise<PrintingEdition[]> {
+    const books: PrintingEdition[] = await database.PrintingEdition.sequelize.query(query, {
+      plain: false,
+      raw: false,
+      type: sequelize.QueryTypes.SELECT,
+    });
+
+    return books;
+  }
+
   public async addBook(book: PrintingEdition): Promise<PrintingEdition> {
     const createdBook: PrintingEdition = await book.save();
 
@@ -73,10 +81,4 @@ export class BookRepo {
 
     return deletedBook;
   }
-
-  // public async findBook(bookId: Book): Promise<Book> {
-  //   const book: Book = await this.bookModel.findById(bookId.id).exec();
-
-  //   return book;
-  // }
 }

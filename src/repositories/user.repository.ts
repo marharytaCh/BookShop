@@ -7,8 +7,6 @@ import sequelize = require('sequelize');
 @Injectable()
 export class UserRepo {
 
-  constructor() {}
-
   public async getAll(): Promise<User[]> {
     const books: User[] = await database.User.findAll();
 
