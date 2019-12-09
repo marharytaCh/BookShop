@@ -9,8 +9,4 @@ export class CreateUserModel {
   email?: string;
   @ApiModelProperty()
   password?: string;
-  @ApiModelProperty()
-  passwordSalt?: string;
-  @ApiModelProperty()
-  passwordHash?: string;
 }

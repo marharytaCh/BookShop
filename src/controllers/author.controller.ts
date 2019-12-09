@@ -1,8 +1,7 @@
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards} from '@nestjs/common';
 import { AuthorService } from 'src/services';
-import { AuthorDocument } from 'src/documents';
-import { CreateAuthorModel, UpdateAuthorModel, AuthorModel } from 'src/models';
+import { CreateAuthorModel, UpdateAuthorModel } from 'src/models';
 import { Roles } from 'src/common';
 import { Author } from 'src/entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -12,6 +11,8 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   @Get()
   @ApiOperation({title: 'Getting all authors'})
   public async getAll(): Promise<Author[]> {
@@ -20,6 +21,8 @@ export class AuthorController {
     return authors;
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   @Get('/deleted')
   @ApiOperation({title: 'Getting all authors by id'})
   public async getByIsRemoved(): Promise<Author[]> {
@@ -28,6 +31,8 @@ export class AuthorController {
     return author;
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   @Get(':id')
   @ApiOperation({title: 'Getting all authors by id'})
   public async getById(@Param('id') id: string): Promise<Author> {
@@ -36,6 +41,8 @@ export class AuthorController {
     return author;
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   @Post()
   @ApiOperation({title: 'Creating author'})
   public async addAuthor(@Body() addAuthorModel: CreateAuthorModel): Promise<Author> {
@@ -44,6 +51,8 @@ export class AuthorController {
     return newAuthor;
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   @Put()
   @ApiOperation({title: 'Edit information about author'})
   public async update(@Body() updateAuthorModel: UpdateAuthorModel): Promise<Author> {
@@ -52,6 +61,8 @@ export class AuthorController {
     return newAuthor;
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Roles('admin')
   @Put(':id')
   @ApiOperation({title: 'Remove'})
   public async remove(@Param() author) {
@@ -65,7 +76,6 @@ export class AuthorController {
   @Delete(':id')
   @ApiOperation({title: 'Delete author by id'})
   public async delete(@Param('id') id: string): Promise<number> {
-    console.log('fgjdflj')
     const deletedAuthor: number = await this.authorService.delete(id);
 
     return deletedAuthor;

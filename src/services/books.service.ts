@@ -1,11 +1,7 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { UpdateBookModel, UpdateBookWithAuthorModel, BookInfoModel } from 'src/models';
-import { Book } from 'src/documents';
-import { CreateBookModel } from 'src/models';
 import { BookRepo } from 'src/repositories/book.repository';
-import { BookModel } from 'src/models/books/book.model';
-import fs = require('fs');
-import { PrintingEdition, AuthorInBooks, Author } from 'src/entity';
+import { PrintingEdition, Author } from 'src/entity';
 import { CreateBookAuthorModel } from 'src/models/books/book-author.model';
 import { Hash } from 'src/common';
 import { AuthorInBooksRepo } from 'src/repositories';

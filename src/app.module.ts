@@ -6,10 +6,10 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { LoggerMiddleware, AllExceptionFilter, LocalStrategy, JwtStrategy, RolesGuard, Hash, databaseProviders } from 'src/common';
 
-import { UserController, BooksController, AuthController, AuthorController, AuthorInBookController } from 'src/controllers';
+import { UserController, BooksController, AuthController, AuthorController, AuthorInBookController, RoleController, UserRoleController } from 'src/controllers';
 import { AppController } from 'src/app.controller';
 
-import { BooksService, UserService, AuthService, AuthorService, AuthorInBookService } from 'src/services';
+import { BooksService, UserService, AuthService, AuthorService, AuthorInBookService, RoleService, UserRoleService } from 'src/services';
 
 import { Environment, environment } from 'src/environment/index';
 
@@ -36,6 +36,8 @@ const env: Environment = environment();
     AuthController,
     AuthorController,
     AuthorInBookController,
+    RoleController,
+    UserRoleController,
   ],
   providers: [
     BooksService,
@@ -43,6 +45,8 @@ const env: Environment = environment();
     AuthorService,
     UserService,
     AuthorInBookService,
+    RoleService,
+    UserRoleService,
     LocalStrategy,
     JwtStrategy,
     BookRepo,

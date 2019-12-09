@@ -50,13 +50,13 @@ export class User extends Model<User> {
   @Column({ allowNull: true })
   validCode: string;
 
-  @ApiModelProperty()
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  isDeleted: boolean;
+  // @ApiModelProperty()
+  // @Column({
+  //   type: DataType.BOOLEAN,
+  //   allowNull: false,
+  //   defaultValue: false,
+  // })
+  // isDeleted: boolean;
 
   @HasMany(() => Order, 'userId')
   order: Order[];

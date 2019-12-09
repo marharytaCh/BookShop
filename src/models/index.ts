@@ -13,6 +13,7 @@ export * from 'src/models/user/update-user.model';
 export * from 'src/models/user/user-payload.model';
 export * from 'src/models/user/added-user.model';
 export * from 'src/models/user/info.model';
+export * from 'src/models/roles/role.model';
 export * from 'src/models/change-password.model';
 export * from 'src/models/create-transport.model';
 export * from 'src/models/login.model';

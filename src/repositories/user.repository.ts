@@ -1,33 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import * as mongoose from 'mongoose';
-
-import { UserSchema, UserDocument } from 'src/documents/user.document';
 import { User } from 'src/entity';
 import database = require('src/entity');
+import { UserInRoleModel } from 'src/models/user/user-role.model';
+import sequelize = require('sequelize');
 
 @Injectable()
 export class UserRepo {
 
   constructor() {}
-  private readonly userModel: Model<UserDocument> = mongoose.model('User', UserSchema);
 
-  public async getAll(): Promise<UserDocument[]> {
-    const books: UserDocument[] = await this.userModel.find().exec();
+  public async getAll(): Promise<User[]> {
+    const books: User[] = await database.User.findAll();
 
     return books;
   }
 
-  public async getById(userId: UserDocument): Promise<UserDocument> {
-    const user: UserDocument = await this.userModel.findById(userId);
+  public async getById(userId: string): Promise<User> {
+    const user: User = await database.User.findOne({
+      where: { id: userId },
+    });
 
     return(user);
   }
 
-  public async getPagination(offset: number, limit: number): Promise<UserDocument[]> {
-    const users: UserDocument[] = await this.userModel.find().skip(offset).limit(limit).exec();
+  public async getUserInRoleByEmail(query: string): Promise<UserInRoleModel[]> {
+    const user: UserInRoleModel[] = await database.User.sequelize.query(query, {
+      plain: false,
+      raw: false,
+      type: sequelize.QueryTypes.SELECT,
+    });
 
-    return users;
+    return user;
   }
 
   public async addUser(createUser: User): Promise<User> {
@@ -36,37 +39,19 @@ export class UserRepo {
     return newUser;
   }
 
-  public async update(updateUserDocument: UserDocument): Promise<UserDocument> {
-    const updatedUser: UserDocument = await this.userModel.findByIdAndUpdate(updateUserDocument.id, updateUserDocument);
-
-    return updatedUser;
-  }
-
-  public async delete(userId: string): Promise<UserDocument> {
-    const deletedUser: UserDocument = await this.userModel.findByIdAndRemove(userId);
+  public async delete(userId: string): Promise<number> {
+    const deletedUser: number = await database.User.destroy({
+      where: { id: userId },
+    });
 
     return deletedUser;
   }
 
-  public async findByUsername(userEmail: string): Promise<User> {
-    console.log('findByname', userEmail);
-   try{
+  public async getByUsername(userEmail: string): Promise<User> {
     const user: User = await database.User.findOne({
       where: { email: userEmail },
-  });
-  console.log('foundUser', user);
-    return user;
-   } catch(e) {
-     console.log(e);
-   }
-    
-  }
+    });
 
-  public async validUser(username: string) {
-    if (username) {
-      const rightEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return rightEmail.test(username);
-    }
-    return false;
+    return user;
   }
 }

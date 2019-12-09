@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-// import { AuthorDocument, AuthorSchema } from 'src/documents';
-import { Author, PrintingEdition } from 'src/entity';
-// import { Model } from 'mongoose';
-// import * as mongoose from 'mongoose';
+import { Author } from 'src/entity';
 import database = require('src/entity');
 
 @Injectable()
@@ -30,8 +27,8 @@ export class AuthorRepo {
     return author;
   }
 
-  public async addAuthor(addAuthorDocument: Author): Promise<Author> {
-    const newAuthor: Author = await addAuthorDocument.save();
+  public async addAuthor(addAuthor: Author): Promise<Author> {
+    const newAuthor: Author = await addAuthor.save();
 
     return newAuthor;
   }

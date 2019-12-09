@@ -1,9 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import * as mongoose from 'mongoose';
-
-import { Book, BookSchema, AuthorDocument, AuthorSchema } from 'src/documents';
-import { InjectModel } from '@nestjs/mongoose';
 import { PrintingEdition, Author } from 'src/entity';
 
 import database = require('src/entity');
@@ -11,11 +6,8 @@ import sequelize = require('sequelize');
 
 @Injectable()
 export class BookRepo {
-  private readonly bookModel: Model<Book>;
 
-  constructor() {
-    this.bookModel = mongoose.model('Book', BookSchema);
-  }
+  constructor() {}
 
   public async getAll(): Promise<PrintingEdition[]> {
     const books: PrintingEdition[] = await database.PrintingEdition.findAll();

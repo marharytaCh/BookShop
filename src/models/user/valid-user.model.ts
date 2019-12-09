@@ -1,7 +1,6 @@
 export interface ValidateUserModel {
-  userId?: number;
+  userId?: string;
   username?: string;
   role?: string;
   firstName?: string;
-  lastName?: string;
 }

@@ -9,6 +9,4 @@ export class UpdateUserModel {
     lastName?: string;
     @ApiModelProperty()
     username?: string;
-    @ApiModelProperty()
-    password?: string;
 }

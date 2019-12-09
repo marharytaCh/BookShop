@@ -1,12 +1,15 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/services';
-import { UserModel } from 'src/models';
+import { UserModel, ValidateUserModel, Token } from 'src/models';
 import { environment } from 'src/environment';
 import jwt = require('jsonwebtoken');
 import { Hash } from 'src/common';
 import { LoginUserModel } from 'src/models/login.model';
 import { UserPayloadModel } from 'src/models/user/user-payload.model';
+import { UserInRole } from 'src/entity';
+import { UserInRoleModel } from 'src/models/user/user-role.model';
+import { AccessTokenModel } from 'src/models/access.model';
 
 const env = environment();
 
@@ -17,41 +20,47 @@ export class AuthService {
     @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
     ) {}
 
-  public async validateUser(username: string, password: string): Promise<UserModel> {
-    let query = '';
-    const user = await this.usersService.findByUsername(username);
-    const passwordHash: boolean = await this.passwordHelper.comparePassword(password, user.passwordHash);
+  public async validateUser(username: string, password: string): Promise<ValidateUserModel> {
+    let query = 'SELECT users.id, users.firstName, users.passwordHash, users.email, users.emailConfirmed, roles.name FROM userinroles INNER JOIN roles ON userinroles.roleId = roles.id INNER JOIN users ON userinroles.userId = users.id WHERE users.email = \'';
+    query += username + '\'';
+    const user: UserInRoleModel[] = await this.usersService.getUserInRoleByEmail(query);
 
-    if (!passwordHash ) {
+    if (!user || !user[0].emailConfirmed ) {
       return null;
     }
 
-    if (passwordHash) {
-      const userModel: UserModel = {};
-      userModel.id = user.id;
-      userModel.firstName = user.firstName;
-      userModel.lastName = user.lastName;
-      return userModel;
+    const validPassword: boolean = await this.passwordHelper.comparePassword(password, user[0].passwordHash);
+
+    if (validPassword) {
+      const authUser: ValidateUserModel = {};
+      authUser.userId = user[0].id;
+      authUser.firstName = user[0].firstName;
+      authUser.role = user[0].name;
+
+      return authUser;
     }
 
     return null;
   }
 
-  public getToken(loginModel: LoginUserModel): string {
-    const accessToken: string = jwt.sign(loginModel, env.tokenSecret, { expiresIn: env.tokenLife});
+  public getToken(user: ValidateUserModel): string {
+    const accessToken: string = jwt.sign(user, env.tokenSecret, { expiresIn: env.tokenLife});
 
     return accessToken;
   }
 
-  public  getRefresh(payload: UserModel): string {
-    const user: UserModel = {
-      // role: payload.userRole,
-      id: payload.id,
-      username: payload.username,
+  public  getRefresh(user: ValidateUserModel): Token {
+    const accessToken = this.getToken(user);
+    const access: AccessTokenModel = {
+      accessToken,
     };
-    const refreshToken: string = jwt.sign(user, env.tokenSecret, { expiresIn: env.tokenExpireIn});
+    const refresh: string = jwt.sign(access, env.tokenSecret, { expiresIn: env.tokenExpireIn });
+    const tokens: Token = {
+      accessToken,
+      refreshToken: refresh,
+    };
 
-    return refreshToken;
+    return tokens;
   }
 
 }

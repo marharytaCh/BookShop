@@ -1,5 +1,4 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { AuthorDocument } from 'src/documents';
 import { AuthorRepo } from 'src/repositories';
 import { CreateAuthorModel, UpdateAuthorModel, AuthorModel } from 'src/models';
 import { Author } from 'src/entity';
@@ -42,9 +41,9 @@ export class AuthorService {
     const updateAuthor: Author = new Author();
     updateAuthor.id = author.id;
     updateAuthor.name = author.name;
-    const findAuthorById = await this.authorRepo.getById(updateAuthor.id);
-    findAuthorById.name = updateAuthor.name;
-    const updatedAuthor: Author = await this.authorRepo.addAuthor(findAuthorById);
+    const getAuthorById = await this.authorRepo.getById(updateAuthor.id);
+    getAuthorById.name = updateAuthor.name;
+    const updatedAuthor: Author = await this.authorRepo.addAuthor(getAuthorById);
 
     return updatedAuthor;
   }

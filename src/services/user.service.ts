@@ -1,13 +1,10 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 
-import { UserModel, UpdateUserModel, UserInfoModel, CreateUserModel, AddedUserModel} from 'src/models';
+import { UpdateUserModel, UserInfoModel, CreateUserModel, AddedUserModel, ResetPassword, ChangePassword} from 'src/models';
 import { UserRepo, RoleRepo, UserRoleRepo } from 'src/repositories';
-import { UserDocument } from 'src/documents';
 import { Hash } from 'src/common';
-import * as bcrypt from 'bcrypt';
-import { ResetPassword } from 'src/models/reset-password.model';
-import { ChangePassword } from 'src/models/change-password.model';
 import { User, UserInRole } from 'src/entity';
+import { UserInRoleModel } from 'src/models/user/user-role.model';
 
 @Injectable()
 export class UserService {
@@ -17,49 +14,28 @@ export class UserService {
               @Inject(forwardRef(() => Hash)) private readonly passwordHelper: Hash,
             ) {}
 
-  public async getAll(): Promise<UserModel[]> {
-    const usersModel: UserModel[] = new Array<UserModel>();
-    const users: UserDocument[] = await this.userRepo.getAll();
-    for (const user of users) {
-      const userModel: UserModel = {};
-      userModel.id = user.id;
-      userModel.firstName = user.firstName;
-      userModel.lastName = user.lastName;
-      userModel.username = user.username;
-      userModel.userRole = user.userRole;
-      usersModel.push(userModel);
-    }
+  public async getAll(): Promise<User[]> {
+    const users: User[] = await this.userRepo.getAll();
 
-    return usersModel;
+    return users;
   }
 
-  public async getById(userId: UserDocument): Promise<UserModel> {
-    const userModel: UserModel = {};
-    const userDocument = await this.userRepo.getById(userId);
-    userModel.id = userDocument.id;
-    userModel.firstName = userDocument.firstName;
-    userModel.lastName = userDocument.lastName;
-    userModel.username = userDocument.username;
-    userModel.userRole = userDocument.userRole;
-    userModel.password = userDocument.password;
+  public async getById(userId: string): Promise<User> {
+    const user: User = await this.userRepo.getById(userId);
 
-    return userModel;
+    return user;
   }
 
-  public async getPagination(offset: number, limit: number): Promise<UserModel[]> {
-    const usersModel: UserModel[] = new Array<UserModel>();
-    const userDocument: UserDocument[] = await this.userRepo.getPagination(offset, limit);
-    for (const user of userDocument) {
-      const userModel: UserModel = {};
-      userModel.id = user.id;
-      userModel.firstName = user.firstName;
-      userModel.lastName = user.lastName;
-      userModel.username = user.username;
-      userModel.userRole = user.userRole;
-      usersModel.push(userModel);
-    }
+  public async getByEmail(email: string): Promise<User> {
+    const user = await this.userRepo.getByUsername(email);
 
-    return usersModel;
+    return user;
+  }
+
+  public async getUserInRoleByEmail(query: string): Promise<UserInRoleModel[]> {
+    const user: UserInRoleModel[] = await this.userRepo.getUserInRoleByEmail(query);
+
+    return user;
   }
 
   public async addUser(createUser: CreateUserModel, req): Promise<UserInfoModel> {
@@ -71,16 +47,16 @@ export class UserService {
     user.lastName = createUser.lastName;
     user.email = createUser.email;
     user.id = this.passwordHelper.generateId();
-    console.log('user', user.email);
-    const userRegistered: User = await this.userRepo.findByUsername(user.email);
-   // console.log('userRegistered', userRegistered);
+
+    const userRegistered: User = await this.userRepo.getByUsername(user.email);
+
     if (userRegistered) {
       const err: UserInfoModel = new UserInfoModel();
       err.message = 'user with this email already exist';
 
       return err;
     }
-    console.log('userRegistered', userRegistered)
+
     const salt = await this.passwordHelper.getSalt();
     user.salt = salt;
 
@@ -103,11 +79,11 @@ export class UserService {
       createUserModel.emailConfirmed = addedUser.emailConfirmed;
       userInfo.userCreateModel = addedUser;
 
-      // const createUserRole = await this.createUserRole(user.id);
-      // if (!createUserRole) {
+      const createUserRole = await this.createUserRole(user.id);
+      if (!createUserRole) {
 
-      //   return null;
-      // }
+        return null;
+      }
 
       return userInfo;
     }
@@ -119,10 +95,10 @@ export class UserService {
     createUserModel.emailConfirmed = createdUser.emailConfirmed;
     userInfo.userCreateModel = createdUser;
 
-    // const roleInUser = await this.createUserRole(createUserModel.id);
-    // if (!roleInUser) {
-    //     return null;
-    //   }
+    const roleInUser = await this.createUserRole(createUserModel.id);
+    if (!roleInUser) {
+        return null;
+      }
 
     return userInfo;
 
@@ -135,108 +111,85 @@ export class UserService {
     userInRole.id = await this.passwordHelper.generateId();
     userInRole.roleId = roleId;
     userInRole.userId = id;
-    const createRole = await this.userRoleRepo.createUserInRole(userInRole);
+    const createRole = await this.userRoleRepo.addUserInRole(userInRole);
 
     return createRole;
   }
 
-  // public async resetPassword(resetPassword: ResetPassword) {
-  //   const user = await this.userRepo.findByUsername(resetPassword.username);
-  //   if (user) {
-  //     const validCode = await this.passwordHelper.resetPassword(user.username);
-  //     user.passwordSalt = await this.passwordHelper.getSalt();
-  //     user.passwordHash = await this.passwordHelper.getHashing(validCode, user.passwordSalt);
-  //     const updatedUser = await this.userRepo.update(user);
-  //     const userModel: UserModel = {};
-  //     userModel.firstName = user.firstName;
-  //     userModel.lastName = user.lastName;
-  //     userModel.username = user.username;
-  //     userModel.confirmEmail = user.confirmEmail;
-  //     return userModel;
-  //   }
-  // }
+  public async resetPassword(resetPassword: ResetPassword): Promise<UserInfoModel> {
+    const user = await this.userRepo.getByUsername(resetPassword.username);
+    if (user) {
+      const validCode = await this.passwordHelper.resetPassword(user.email);
+      user.salt = await this.passwordHelper.getSalt();
+      user.passwordHash = await this.passwordHelper.getHashing(validCode, user.salt);
+      const updatedUser: User = await this.userRepo.addUser(user);
+      const userModel: UserInfoModel = new UserInfoModel();
+      userModel.user = updatedUser;
 
-  public async update(updateUserModel: UpdateUserModel): Promise<UserModel> {
-    const updateUserDocument: UserDocument = {};
-    updateUserDocument.id = updateUserModel.id;
-    updateUserDocument.firstName = updateUserModel.firstName;
-    updateUserDocument.lastName = updateUserModel.lastName;
-    updateUserDocument.username = updateUserModel.username;
-    updateUserDocument.passwordSalt = await this.passwordHelper.getSalt();
-    updateUserDocument.passwordHash = await this.passwordHelper.getHashing(updateUserModel.password, updateUserDocument.passwordSalt);
-
-    const updateUser: UserModel = {};
-    const updatedUserDocument = await this.userRepo.update(updateUserDocument);
-    updateUser.id = updatedUserDocument.id;
-    updateUser.firstName = updatedUserDocument.firstName;
-    updateUser.lastName = updatedUserDocument.lastName;
-    updateUser.username = updatedUserDocument.username;
-    updateUser.userRole = updatedUserDocument.userRole;
-
-    return updateUser;
-  }
-
-  // public async changePassword(changePassword: ChangePassword) {
-  //   const user = await this.userRepo.findByUsername(changePassword.username);
-  //   const compearedPassword = await this.passwordHelper.comparePassword(changePassword.oldPassword, user.passwordHash)
-  //   const info = new UserInfoModel();
-  //   if (!user) {
-  //     info.message = 'User with this usernmae does not exist';
-  //     return info;
-  //   }
-  //   if (compearedPassword && (changePassword.newPassword === changePassword.repeatNewPassword)) {
-  //     user.passwordSalt = await this.passwordHelper.getSalt();
-  //     user.passwordHash = await this.passwordHelper.getHashing(changePassword.newPassword, user.passwordSalt);
-
-  //     const userWithNewPassword = await this.userRepo.update(user);
-  //     userWithNewPassword.passwordSalt = user.passwordSalt;
-  //     userWithNewPassword.passwordHash = user.passwordHash;
-  //     return userWithNewPassword;
-  //   }
-
-  //   if (!compearedPassword) {
-  //     info.message = 'Your old password is inncorect';
-  //     return info;
-  //   }
-  //   if (changePassword.newPassword !== changePassword.repeatNewPassword) {
-  //     info.message = 'Make sure that you entered correct new password';
-  //     return info;
-  //   }
-  // }
-
-  // public async delete(userId: string): Promise<UserModel> {
-  //   const deletedUser: UserModel = {};
-  //   const deletedUserDocument = await this.userRepo.delete(userId);
-  //   deletedUser.id = deletedUserDocument.id;
-  //   deletedUser.firstName = deletedUserDocument.firstName;
-  //   deletedUser.lastName = deletedUserDocument.lastName;
-
-  //   return deletedUser;
-  // }
-
-  public async findByUsername(username: string): Promise<UserModel> {
-    const user: User = new User();
-    const userDocument = await this.userRepo.findByUsername(username);
-    user.id = userDocument.id;
-    user.firstName = userDocument.firstName;
-    user.lastName = userDocument.lastName;
-    user.email = userDocument.email;
-    user.salt = userDocument.salt;
-    user.passwordHash = userDocument.passwordHash;
-    user.validCode = userDocument.validCode;
-    user.emailConfirmed = userDocument.emailConfirmed;
-
-    return user;
-  }
-
-  public async isUserValid(token: string, user: UserModel) {
-    if (user.validCode === token) {
-      user.confirmEmail = true;
+      return userModel;
     }
+
+    return null;
+  }
+
+  public async update(updateUserModel: UpdateUserModel): Promise<User> {
+    const updateUser: User = new User();
+    updateUser.id = updateUserModel.id;
+    updateUser.firstName = updateUserModel.firstName;
+    updateUser.lastName = updateUserModel.lastName;
+    updateUser.email = updateUserModel.username;
+    const getUserById = await this.userRepo.getById(updateUser.id);
+    const updatedUser = await this.userRepo.addUser(getUserById);
+
+    return updatedUser;
+  }
+
+  public async changePassword(changePassword: ChangePassword): Promise<UserInfoModel> {
+    const user = await this.userRepo.getByUsername(changePassword.username);
+    const compearedPassword = await this.passwordHelper.comparePassword(changePassword.oldPassword, user.passwordHash);
+    const userModel = new UserInfoModel();
+    if (!user) {
+      userModel.message = 'User with this usernmae does not exist';
+      return userModel;
+    }
+    if (compearedPassword && (changePassword.newPassword === changePassword.repeatNewPassword)) {
+      user.salt = await this.passwordHelper.getSalt();
+      user.passwordHash = await this.passwordHelper.getHashing(changePassword.newPassword, user.salt);
+
+      const userWithNewPassword: User = await this.userRepo.addUser(user);
+      userModel.user = userWithNewPassword;
+      return userModel;
+    }
+
+    if (!compearedPassword) {
+      userModel.message = 'Your old password is inncorect';
+      return userModel;
+    }
+    if (changePassword.newPassword !== changePassword.repeatNewPassword) {
+      userModel.message = 'Make sure that you entered correct new password';
+      return userModel;
+    }
+  }
+
+  public async delete(userId: string): Promise<number> {
+    const deletedUser: number = await this.userRepo.delete(userId);
+
+    return deletedUser;
+  }
+
+  public async isUserValid(token: string, user: User): Promise<UserInfoModel> {
+    if (user.validCode === token) {
+      user.emailConfirmed = true;
+    }
+    if (user.validCode !== token) {
+      const err = new UserInfoModel();
+      err.message = 'Your token is wrong';
+    }
+
     user.validCode = '';
-    const userDocument: UserDocument = await this.userRepo.update(user);
+    const userAdded: User = await this.userRepo.addUser(user);
     const info = new UserInfoModel();
-    if (userDocument) {
+    if (userAdded) {
       info.message = 'Confirmed';
       return info;
     }

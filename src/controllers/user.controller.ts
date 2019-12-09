@@ -2,46 +2,43 @@ import { Controller, Get, Param, Post, Body, Put, Delete, Request } from '@nestj
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from 'src/services';
 import { UserModel, UpdateUserModel } from 'src/models';
-import { UserDocument } from 'src/documents';
 import { Roles } from 'src/common';
+import { User } from 'src/entity';
 
-@ApiUseTags('Users table')
+@ApiUseTags('Users')
 @Controller('users')
 export class UserController {
   constructor(
     private userService: UserService,
   ) {}
+
+  @ApiOperation({title: 'Get all usres'})
   @Get()
   @Roles('admin')
-  public async getAll(): Promise<UserModel[]> {
-    const users: UserModel[] = await this.userService.getAll();
+  public async getAll(): Promise<User[]> {
+    const users: User[] = await this.userService.getAll();
 
     return users;
   }
 
+  @ApiOperation({title: 'Get user by id'})
   @Get(':id')
   @Roles('admin')
-  public async getbyId(@Param('id') id: UserDocument): Promise<UserModel> {
-    const user: UserModel = await this.userService.getById(id);
+  public async getbyId(@Param('id') id: string): Promise<User> {
+    const user: User = await this.userService.getById(id);
 
     return user;
   }
 
-  @Get(':offset/:limit')
-  public async getPagination(@Param('offset') offset: string, @Param('limit') limit: string): Promise<UserModel[]> {
-    const users: UserModel[] = await this.userService.getPagination(+offset, +limit);
-
-    return users;
-  }
-
   @Get('/confirm/:email/:token')
   public async verificateEmail(@Param('email') email: string, @Param('token') token: string) {
-    const user = await this.userService.findByUsername(email);
+    const user = await this.userService.getByEmail(email);
     const validate = await this.userService.isUserValid(token, user);
 
     return validate;
   }
 
+  @ApiOperation({title: 'Update user'})
   @Put()
   async update(@Body() updateUserModel: UpdateUserModel): Promise<UserModel> {
     const updatedUser: UserModel = await this.userService.update(updateUserModel);
@@ -49,10 +46,11 @@ export class UserController {
     return updatedUser;
   }
 
-  // @Delete(':id')
-  // async delete(@Param('id') id: string): Promise<UserModel> {
-  //   const deletedUser: UserModel = await this.userService.delete(id);
+  @ApiOperation({title: 'Delete user'})
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<number> {
+    const deletedUser: number = await this.userService.delete(id);
 
-  //   return deletedUser;
-  // }
+    return deletedUser;
+  }
 }
