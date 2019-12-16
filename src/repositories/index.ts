@@ -4,3 +4,6 @@ export * from 'src/repositories/user.repository';
 export * from 'src/repositories/author-book.repository';
 export * from 'src/repositories/role.repository';
 export * from 'src/repositories/user-role.repository';
+export * from 'src/repositories/order.repository';
+export * from 'src/repositories/payment.repository';
+export * from 'src/repositories/order-item.repository';

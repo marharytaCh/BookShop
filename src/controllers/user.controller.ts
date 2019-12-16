@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Put, Delete, Request } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, Request, Res } from '@nestjs/common';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { UserService } from 'src/services';
 import { UserModel, UpdateUserModel } from 'src/models';
@@ -31,7 +31,7 @@ export class UserController {
   }
 
   @Get('/confirm/:email/:token')
-  public async verificateEmail(@Param('email') email: string, @Param('token') token: string) {
+  public async verificateEmail(@Param('email') email: string, @Param('token') token: string, @Res() res) {
     const user = await this.userService.getByEmail(email);
     const validate = await this.userService.isUserValid(token, user);
 

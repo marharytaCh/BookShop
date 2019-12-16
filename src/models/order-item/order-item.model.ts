@@ -2,11 +2,13 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 export class OrderItemModel {
     @ApiModelProperty()
-    pritingEditionId: string;
+    id: string;
     @ApiModelProperty()
     amount: number;
     @ApiModelProperty()
     currency: string;
     @ApiModelProperty()
-    count: number;
+    pritingEditionId: string;
+    @ApiModelProperty()
+    orderId: string;
 }

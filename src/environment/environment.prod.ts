@@ -9,7 +9,7 @@ export const prod: Environment = {
   tokenSecret: fs.readFileSync('src/secrets/jwtKey.key'),
   tokenLife: 60 * 60,
   tokenExpireIn: 60 * 60 * 24,
-  connectionWithMongo: 'mongodb+srv://chernysh:SYdEsXxKXaRFd7kS@dbversion01-j2fbg.mongodb.net/shop?retryWrites=true&w=majority',
+  // connectionWithMongo: 'mongodb+srv://chernysh:SYdEsXxKXaRFd7kS@dbversion01-j2fbg.mongodb.net/shop?retryWrites=true&w=majority',
   serviceMail: 'gmail',
   userMail: 'bookShop@gmail.com',
   passwordMail: 'bookShop',
@@ -21,4 +21,5 @@ export const prod: Environment = {
   databaseUsername: 'root',
   databasePassword: '1304',
   database: 'shop',
+  stripePrivatKey: 'sk_test_34O3pvf39e8Mtptjxt28A1xq00pMu9DdDG',
 };

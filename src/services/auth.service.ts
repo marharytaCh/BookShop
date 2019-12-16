@@ -1,13 +1,9 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/services';
-import { UserModel, ValidateUserModel, Token } from 'src/models';
+import { ValidateUserModel, Token } from 'src/models';
 import { environment } from 'src/environment';
 import jwt = require('jsonwebtoken');
 import { Hash } from 'src/common';
-import { LoginUserModel } from 'src/models/login.model';
-import { UserPayloadModel } from 'src/models/user/user-payload.model';
-import { UserInRole } from 'src/entity';
 import { UserInRoleModel } from 'src/models/user/user-role.model';
 import { AccessTokenModel } from 'src/models/access.model';
 
@@ -43,14 +39,14 @@ export class AuthService {
     return null;
   }
 
-  public getToken(user: ValidateUserModel): string {
+  public getAccess(user: ValidateUserModel): string {
     const accessToken: string = jwt.sign(user, env.tokenSecret, { expiresIn: env.tokenLife});
 
     return accessToken;
   }
 
-  public  getRefresh(user: ValidateUserModel): Token {
-    const accessToken = this.getToken(user);
+  public  getTokens(user: ValidateUserModel): Token {
+    const accessToken = this.getAccess(user);
     const access: AccessTokenModel = {
       accessToken,
     };

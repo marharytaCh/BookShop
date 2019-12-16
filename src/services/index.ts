@@ -5,3 +5,6 @@ export * from 'src/services/authors.service';
 export * from 'src/services/author-book.service';
 export * from 'src/services/role.sevice';
 export * from 'src/services/user-role.service';
+export * from 'src/services/order.service';
+export * from 'src/services/payment.service';
+export * from 'src/services/order-item.service';

@@ -12,8 +12,8 @@ export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Get()
+  @Roles('admin')
   @ApiOperation({title: 'Getting all authors'})
   public async getAll(): Promise<Author[]> {
     const authors: Author[] = await this.authorService.getAll();
@@ -22,18 +22,18 @@ export class AuthorController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Get('/deleted')
+  @Roles('admin')
   @ApiOperation({title: 'Getting all authors by id'})
-  public async getByIsRemoved(): Promise<Author[]> {
-    const author: Author[] = await this.authorService.getByIsRemoved();
+  public async getBy(): Promise<Author[]> {
+    const author: Author[] = await this.authorService.getByIsDeleted();
 
     return author;
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Get(':id')
+  @Roles('admin')
   @ApiOperation({title: 'Getting all authors by id'})
   public async getById(@Param('id') id: string): Promise<Author> {
     const author: Author = await this.authorService.getById(id);
@@ -42,8 +42,8 @@ export class AuthorController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Post()
+  @Roles('admin')
   @ApiOperation({title: 'Creating author'})
   public async addAuthor(@Body() addAuthorModel: CreateAuthorModel): Promise<Author> {
     const newAuthor: Author = await this.authorService.addAuthor(addAuthorModel);
@@ -52,8 +52,8 @@ export class AuthorController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Put()
+  @Roles('admin')
   @ApiOperation({title: 'Edit information about author'})
   public async update(@Body() updateAuthorModel: UpdateAuthorModel): Promise<Author> {
     const newAuthor: Author = await this.authorService.update(updateAuthorModel);
@@ -62,8 +62,8 @@ export class AuthorController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Put(':id')
+  @Roles('admin')
   @ApiOperation({title: 'Remove'})
   public async remove(@Param() author) {
     const removed: Author = await this.authorService.removeAuthor(author.id);
@@ -72,8 +72,8 @@ export class AuthorController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Delete(':id')
+  @Roles('admin')
   @ApiOperation({title: 'Delete author by id'})
   public async delete(@Param('id') id: string): Promise<number> {
     const deletedAuthor: number = await this.authorService.delete(id);

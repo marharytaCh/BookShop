@@ -5,3 +5,6 @@ export * from 'src/controllers/author.controller';
 export * from 'src/controllers/author-book.controller';
 export * from 'src/controllers/roles.controller';
 export * from 'src/controllers/user-role.controller';
+export * from 'src/controllers/order.controller';
+export * from 'src/controllers/payment.controller';
+export * from 'src/controllers/order-item.controller';

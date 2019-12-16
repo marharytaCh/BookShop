@@ -19,7 +19,7 @@ export class AuthorRepo {
     return author;
   }
 
-  public async getByIsRemoved(): Promise<Author[]> {
+  public async getByIsDeleted(): Promise<Author[]> {
     const author: Author[] = await database.Author.findAll({
       where: { isDeleted: true },
     });

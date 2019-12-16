@@ -23,8 +23,8 @@ export class BooksService {
     return books;
   }
 
-  public async getByIsRemoved(): Promise<PrintingEdition[]> {
-    const removedBook: PrintingEdition[] = await this.bookRepo.getByIsRemoved();
+  public async getByIsDeleted(): Promise<PrintingEdition[]> {
+    const removedBook: PrintingEdition[] = await this.bookRepo.getByIsDeleted();
 
     return removedBook;
   }
@@ -60,7 +60,7 @@ export class BooksService {
 
   public async getFiltration(bookFiltModel: BookFiltrationModel) {
     const book: BookFiltrationModel = new BookFiltrationModel();
-    // book.name = bookFiltModel.name;
+
     book.status = bookFiltModel.status;
     book.minPrice = bookFiltModel.minPrice;
     book.maxPrice = bookFiltModel.maxPrice;

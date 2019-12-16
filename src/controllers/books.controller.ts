@@ -34,11 +34,11 @@ export class BooksController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Get('/deleted')
+  @Roles('admin')
   @ApiOperation({title: 'Getting all books by isDeleted'})
-  public async getByIsRemoved(): Promise<PrintingEdition[]> {
-    const author: PrintingEdition[] = await this.booksService.getByIsRemoved();
+  public async getByIsDeleted(): Promise<PrintingEdition[]> {
+    const author: PrintingEdition[] = await this.booksService.getByIsDeleted();
 
     return author;
   }
@@ -67,18 +67,16 @@ export class BooksController {
   }
 
   @Get('/filtration')
-   public async getFiltration(@Query() query: BookFiltrationModel){
+   public async getFiltration(@Query() query: BookFiltrationModel) {
     const books = await this.booksService.getFiltration(query);
 
     return books;
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @ApiOperation({ title: 'Create book' })
-  @ApiResponse({ status: 201, description: 'The book has been successfully created.'})
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post()
+  @Roles('admin')
   async addBook(@Body() createBook: CreateBookAuthorModel): Promise<PrintingEdition> {
     const book: PrintingEdition = await this.booksService.addBook(createBook);
 
@@ -86,8 +84,8 @@ export class BooksController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Put(':id')
+  @Roles('admin')
   @ApiOperation({title: 'Remove'})
   public async remove(@Param() author) {
     const removed: PrintingEdition = await this.booksService.removeAuthor(author.id);
@@ -96,8 +94,8 @@ export class BooksController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @Put()
+  @Roles('admin')
   @ApiOperation({ title: 'Update book by id'})
   async update(@Body() updateBookModel: UpdateBookModel): Promise<PrintingEdition> {
     const editedBook: PrintingEdition = await this.booksService.update(updateBookModel);
@@ -105,8 +103,6 @@ export class BooksController {
     return editedBook;
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Roles('admin')
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @Roles('admin')

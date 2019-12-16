@@ -10,10 +10,11 @@ export interface Environment {
   passwordMail?: string;
   emailPort?: number;
   secureMail?: boolean;
-  databaseType?: string,
-  databaseHost?: string,
-  databasePort?: number,
-  databaseUsername?: string,
-  databasePassword?: string,
-  database?: string,
+  databaseType?: string;
+  databaseHost?: string;
+  databasePort?: number;
+  databaseUsername?: string;
+  databasePassword?: string;
+  database?: string;
+  stripePrivatKey?: string;
 }

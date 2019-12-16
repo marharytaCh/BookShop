@@ -1,12 +1,13 @@
-import { Controller, Get, UseGuards, Post, Body, UseFilters, Request } from '@nestjs/common';
+import { Controller, Get, UseGuards, Post, Body, UseFilters, Request, Response, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { AuthService, UserService } from 'src/services';
 import { AllExceptionFilter } from 'src/common/exception.filter';
 import { Token } from 'src/models/token.model';
-import { CreateUserModel, ResetPassword, ChangePassword, UserModel, UserInfoModel } from 'src/models';
+import { CreateUserModel, ResetPassword, ChangePassword, UserInfoModel, AuthorizeUserModel } from 'src/models';
 import { Hash } from 'src/common';
 import { User } from 'src/entity';
+
 
 @ApiBearerAuth()
 @ApiUseTags('Authentification')
@@ -20,17 +21,17 @@ export class AuthController {
   @UseFilters(new AllExceptionFilter())
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  public async login(@Request() req): Promise<Token> {
-    const tokens: Token = this.authService.getRefresh(req.user);
+  public async login(@Request() req, @Body() loginUser: AuthorizeUserModel): Promise<Token> {
+    const tokens: Token = this.authService.getTokens(req.user);
 
     return  tokens;
   }
 
   @ApiOperation({title: 'Add new user'})
   @Post('register')
-  public async addUser(@Request() req, @Body() createUser: CreateUserModel): Promise<UserInfoModel> {
+  public async addUser(@Request() req, @Body() createUser: CreateUserModel ): Promise<UserInfoModel> { //@Response() res, 
+    
     const user: UserInfoModel = await this.userService.addUser(createUser, req);
-
     return user;
   }
 

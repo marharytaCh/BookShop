@@ -21,8 +21,8 @@ export class AuthorService {
     return author;
   }
 
-  public async getByIsRemoved(): Promise<Author[]> {
-    const deletedAuthors: Author[] = await this.authorRepo.getByIsRemoved();
+  public async getByIsDeleted(): Promise<Author[]> {
+    const deletedAuthors: Author[] = await this.authorRepo.getByIsDeleted();
 
     return deletedAuthors;
   }

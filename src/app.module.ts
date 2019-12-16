@@ -4,16 +4,52 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
-import { LoggerMiddleware, AllExceptionFilter, LocalStrategy, JwtStrategy, RolesGuard, Hash, databaseProviders } from 'src/common';
+import { LoggerMiddleware,
+  AllExceptionFilter,
+  LocalStrategy,
+  JwtStrategy,
+  RolesGuard,
+  Hash,
+  databaseProviders,
+} from 'src/common';
 
-import { UserController, BooksController, AuthController, AuthorController, AuthorInBookController, RoleController, UserRoleController } from 'src/controllers';
+import { UserController,
+  BooksController,
+  AuthController,
+  AuthorController,
+  AuthorInBookController,
+  RoleController,
+  UserRoleController,
+  OrderItemController,
+  OrderController,
+  PaymentController,
+} from 'src/controllers';
 import { AppController } from 'src/app.controller';
 
-import { BooksService, UserService, AuthService, AuthorService, AuthorInBookService, RoleService, UserRoleService } from 'src/services';
+import { BooksService,
+  UserService,
+  AuthService,
+  AuthorService,
+  AuthorInBookService,
+  RoleService,
+  UserRoleService,
+  OrderItemService,
+  OrderService,
+  PaymentService,
+} from 'src/services';
 
 import { Environment, environment } from 'src/environment/index';
 
-import { AuthorRepo, BookRepo, UserRepo, AuthorInBooksRepo, RoleRepo, UserRoleRepo } from 'src/repositories';
+import { AuthorRepo,
+  BookRepo,
+  UserRepo,
+  AuthorInBooksRepo,
+  RoleRepo,
+  UserRoleRepo,
+  OrderItemRepo,
+  OrderRepo,
+  PaymentRepo,
+} from 'src/repositories';
 import { MulterModule } from '@nestjs/platform-express';
 
 const env: Environment = environment();
@@ -38,6 +74,9 @@ const env: Environment = environment();
     AuthorInBookController,
     RoleController,
     UserRoleController,
+    OrderItemController,
+    OrderController,
+    PaymentController,
   ],
   providers: [
     BooksService,
@@ -47,6 +86,9 @@ const env: Environment = environment();
     AuthorInBookService,
     RoleService,
     UserRoleService,
+    OrderItemService,
+    OrderService,
+    PaymentService,
     LocalStrategy,
     JwtStrategy,
     BookRepo,
@@ -55,6 +97,9 @@ const env: Environment = environment();
     AuthorInBooksRepo,
     RoleRepo,
     UserRoleRepo,
+    OrderItemRepo,
+    OrderRepo,
+    PaymentRepo,
     Hash,
     ...databaseProviders,
     {

@@ -17,10 +17,10 @@ async function bootstrap() {
   const server = express();
   const env: Environment = environment();
 
-  mongoose.connect(env.connectionWithMongo,
-                  { useNewUrlParser: true,
-                    useUnifiedTopology: true,
-                    useFindAndModify: false });
+  // mongoose.connect(env.connectionWithMongo,
+  //                 { useNewUrlParser: true,
+  //                   useUnifiedTopology: true,
+  //                   useFindAndModify: false });
 
   const app = await NestFactory.create(
     AppModule,

@@ -21,7 +21,7 @@ export class BookRepo {
     return book;
   }
 
-  public async getByIsRemoved(): Promise<PrintingEdition[]> {
+  public async getByIsDeleted(): Promise<PrintingEdition[]> {
     const book: PrintingEdition[] = await database.PrintingEdition.findAll({
       where: {isDeleted: true},
     });
