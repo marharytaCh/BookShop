@@ -1,14 +1,13 @@
-export class Book {
-  // id: string;
-  // title: string;
-  // author: string;
+import { ApiModelProperty } from '@nestjs/swagger';
 
-  constructor(
-    public id: string, 
-    public title: string, 
-    public author: string){
-    // this.id = id;
-    // this.title = title;
-    // this.author = author;
-  }
+export class CreateBook {
+  @ApiModelProperty()
+  readonly id: number;
+  @ApiModelProperty()
+  readonly title: string;
+  @ApiModelProperty()
+  readonly description: string;
+  @ApiModelProperty()
+  readonly author: string;
+
 }

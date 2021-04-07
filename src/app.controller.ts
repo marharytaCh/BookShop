@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, UseFilters } from '@nestjs/common';
+import { environment } from './environment/environment';
+import { AllExceptionFilter } from './common/exception.filter';
 
+@UseFilters(new AllExceptionFilter())
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor() {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getEnvironment(): any {
+    const result = environment();
+    return result;
+    // this.appService.getHello()
   }
 }

@@ -1,11 +1,14 @@
-// import {dev} from './environment.dev';
-// import {prod} from './environment.prod';
+// imports
+import { Environment } from './environment.model';
+import { dev } from './environment.dev';
+import { prod } from './environment.prod';
 
- module.exports = function checkMode(){
-  if(process.env.NODE_ENV === "production") {  
-    module.exports = require('./environment.prod');    
-}
-if(process.env.NODE_ENV != "production") {  
-  module.exports = require('./environment.dev');   
-}
-};
+const env = process.env.NODE_ENV;
+export const environment = (): Environment => {
+    switch (env) {
+        case 'production':
+            return prod;
+        default:
+         return dev ;
+       }
+  };
